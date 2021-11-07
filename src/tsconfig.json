@@ -6,8 +6,6 @@
       "es2018"
     ],
     "declaration": true,
-    "outDir": "./dist",
-    "rootDir": "./",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
