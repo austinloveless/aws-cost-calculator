@@ -12,7 +12,8 @@
     "test:cdk": "jest test/cdk",
     "test:unit": "jest test/unit",
     "test:integration": "jest test/integration",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "lint": "eslint --ext .js --ignore-path .gitignore ."
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.130.0",
