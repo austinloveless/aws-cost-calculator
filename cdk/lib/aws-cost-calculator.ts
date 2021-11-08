@@ -23,7 +23,7 @@ export class AWSCostCalculator extends Stack {
 
     api.root.addMethod("GET");
     const github = api.root.addResource("graphql");
-    github.addMethod("GET");
+    github.addMethod("ANY");
 
     new CfnOutput(this, "apiPath", {
       value: api.root.path,
