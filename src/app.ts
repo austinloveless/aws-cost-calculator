@@ -5,13 +5,13 @@ import { typeDefs } from "./graphql/typeDefs";
 import { resolvers } from "./graphql/resolvers";
 import { helloWorldRouter } from "./rest/routes";
 
-const server = express();
+const app = express();
 
-server.use("/", helloWorldRouter);
+app.use("/", helloWorldRouter);
 
-server.use(
+app.use(
   "/graphql",
   graphqlHTTP({ schema: typeDefs, rootValue: resolvers, graphiql: true })
 );
 
-export default server;
+export default app;

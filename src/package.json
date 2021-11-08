@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "rimraf dist && tsc -p ./",
     "start": "nodemon",
+    "start:prod": "node dist/index.js",
     "test": "jest"
   },
   "keywords": [],
