@@ -1,6 +1,6 @@
 import "@aws-cdk/assert/jest";
 import { App } from "@aws-cdk/core";
-import { AWSCostCalculator } from "../../cdk/lib/aws-cost-calculator";
+import { AWSCostCalculator } from "../../../cdk/lib/aws-cost-calculator";
 
 test("Lambda Function created with correct values", () => {
   const app = new App();
