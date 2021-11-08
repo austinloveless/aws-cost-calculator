@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "bin": {
-    "app": "bin/cd/app.js"
+    "app": "cdk/bin/app.js"
   },
   "scripts": {
     "build": "tsc",
@@ -12,7 +12,11 @@
     "test:cdk": "jest test/cdk",
     "test:unit": "jest test/unit",
     "test:integration": "jest test/integration",
-    "cdk": "cdk",
+    "build:app": "cd src/ && npm ci && npm run build",
+    "cdk": "cdk --profile ${AWS_PROFILE}",
+    "cdk:deploy": "npm run cdk deploy ",
+    "cdk:diff": "npm run cdk diff",
+    "cdk:synth": "npm run cdk synth",
     "lint": "eslint --ignore-path .gitignore ."
   },
   "devDependencies": {
