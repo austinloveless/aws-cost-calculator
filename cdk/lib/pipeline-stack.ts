@@ -43,7 +43,7 @@ export class PipelineStack extends Stack {
 
     const gitHubSecret = Secret.fromSecretNameV2(
       this,
-      "github-secret",
+      "github-secret-id",
       "github-secret"
     );
 
@@ -188,7 +188,7 @@ export class PipelineStack extends Stack {
             commands: ["npm install", "cd src", "npm install"],
           },
           build: {
-            commands: "npm run build",
+            commands: ["npm run build", "cd ../"],
           },
         },
         artifacts: {
