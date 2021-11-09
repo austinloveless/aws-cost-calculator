@@ -29,6 +29,7 @@ export interface PipelineStackProps extends StackProps {
   readonly devApplicationStack: ApplicationStack;
   readonly stageApplicationStack: ApplicationStack;
   readonly prodApplicationStack: ApplicationStack;
+  readonly rootAccountId: string;
   readonly devAccountId: string;
   readonly stageAccountId: string;
   readonly prodAccountId: string;
@@ -41,10 +42,10 @@ export class PipelineStack extends Stack {
   constructor(app: App, id: string, props: PipelineStackProps) {
     super(app, id, props);
 
-    const gitHubSecret = Secret.fromSecretNameV2(
+    const gitHubSecret = Secret.fromSecretCompleteArn(
       this,
-      "github-secret-id",
-      "github-secret"
+      "github-secret",
+      `arn:aws:secretsmanager:us-east-1:${props.rootAccountId}:secret:github-secret-bEZ24D`
     );
 
     const sourceOutput = new Artifact();
@@ -188,11 +189,11 @@ export class PipelineStack extends Stack {
             commands: ["npm install", "cd src", "npm install"],
           },
           build: {
-            commands: ["npm run build", "cd ../"],
+            commands: ["npm run build:src"],
           },
         },
         artifacts: {
-          "base-directory": "src/dist",
+          "base-directory": "src",
           files: ["index.js", "node_modules/**/*"],
         },
       }),

@@ -12,7 +12,7 @@
     "test:cdk": "jest test/cdk",
     "test:unit": "jest test/unit",
     "test:integration": "jest test/integration",
-    "build:app": "cd src/ && npm ci && npm run build",
+    "build:src": "cd src/ && npm i && npm run build",
     "cdk": "cdk --profile ${AWS_PROFILE}",
     "cdk:deploy": "npm run cdk deploy ",
     "cdk:diff": "npm run cdk diff",

@@ -15,6 +15,7 @@ const gitHubRepo = process.env.GITHUB_REPO || "aws-cost-calculator";
 const gitHubBranch = process.env.GITHUB_BRANCH || "main";
 
 // Account IDs
+const rootAccountId = process.env.ROOT_ACCOUNT || "";
 const devAccountId = process.env.DEV_ACCOUNT || "";
 const stageAccountId = process.env.STAGE_ACCOUNT || "";
 const prodAccountId = process.env.PROD_ACCOUNT || "";
@@ -44,6 +45,7 @@ new PipelineStack(app, "CrossAccountPipelineStack", {
   devApplicationStack,
   stageApplicationStack,
   prodApplicationStack,
+  rootAccountId,
   prodAccountId,
   devAccountId,
   stageAccountId,
