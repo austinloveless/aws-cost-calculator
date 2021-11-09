@@ -1,0 +1,56 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "iam:PassRole",
+      "Resource": "arn:aws:iam::{PROD_ACCOUNT_ID}:role/*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": ["iam:GetRole", "iam:CreateRole", "iam:AttachRolePolicy"],
+      "Resource": "arn:aws:iam::{PROD_ACCOUNT_ID}:role/*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": "lambda:*",
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": "apigateway:*",
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": "codedeploy:*",
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": ["s3:GetObject*", "s3:GetBucket*", "s3:List*"],
+      "Resource": [
+        "arn:aws:s3:::artifact-bucket-{ROOT_ACCOUNT_ID}",
+        "arn:aws:s3:::artifact-bucket-{ROOT_ACCOUNT_ID}/*"
+      ],
+      "Effect": "Allow"
+    },
+    {
+      "Action": ["kms:Decrypt", "kms:DescribeKey"],
+      "Resource": "{KMS_ARN}",
+      "Effect": "Allow"
+    },
+    {
+      "Action": [
+        "cloudformation:CreateStack",
+        "cloudformation:DescribeStack*",
+        "cloudformation:GetStackPolicy",
+        "cloudformation:GetTemplate*",
+        "cloudformation:SetStackPolicy",
+        "cloudformation:UpdateStack",
+        "cloudformation:ValidateTemplate"
+      ],
+      "Resource": "arn:aws:cloudformation:us-east-1:{PROD_ACCOUNT_ID}:stack/ProdApplicationDeploymentStack/*",
+      "Effect": "Allow"
+    }
+  ]
+}

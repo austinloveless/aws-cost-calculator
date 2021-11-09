@@ -1,0 +1,29 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": ["cloudformation:*", "iam:PassRole"],
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": ["s3:Get*", "s3:Put*", "s3:ListBucket"],
+      "Resource": [
+        "arn:aws:s3:::artifact-bucket-{ROOT_ACCOUNT_ID}",
+        "arn:aws:s3:::artifact-bucket-{ROOT_ACCOUNT_ID}/*"
+      ],
+      "Effect": "Allow"
+    },
+    {
+      "Action": [
+        "kms:DescribeKey",
+        "kms:GenerateDataKey*",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:Decrypt"
+      ],
+      "Resource": "{KMS_ARN}",
+      "Effect": "Allow"
+    }
+  ]
+}

@@ -191,16 +191,18 @@ export class PipelineStack extends Stack {
               "cd src",
               "npm install",
               "npm install -g typescript",
-              "ls",
             ],
+          },
+          pre_build: {
+            commands: ["cd ../", "npm run test", "cd src"],
           },
           build: {
             commands: ["npm run build"],
           },
         },
         artifacts: {
-          "base-directory": "dist",
-          files: ["index.js", "node_modules/**/*"],
+          "base-directory": "src",
+          files: ["dist/**/*", "node_modules/**/*"],
         },
       }),
       environment: {
@@ -248,7 +250,7 @@ export class PipelineStack extends Stack {
               stackName: "DevApplicationDeploymentStack",
               adminPermissions: true,
               parameterOverrides: {
-                ...props.prodApplicationStack.lambdaCode.assign(
+                ...props.devApplicationStack.lambdaCode.assign(
                   lambdaBuildOutput.s3Location
                 ),
               },
@@ -263,11 +265,16 @@ export class PipelineStack extends Stack {
           ],
         },
         {
-          stageName: "stage",
+          stageName: "stage-manual-approval",
           actions: [
             new ManualApprovalAction({
               actionName: "manual-approval-stage",
             }),
+          ],
+        },
+        {
+          stageName: "stage",
+          actions: [
             new CloudFormationCreateUpdateStackAction({
               actionName: "Deploy",
               templatePath: cdkBuildOutput.atPath(
@@ -276,7 +283,7 @@ export class PipelineStack extends Stack {
               stackName: "StageApplicationDeploymentStack",
               adminPermissions: true,
               parameterOverrides: {
-                ...props.prodApplicationStack.lambdaCode.assign(
+                ...props.stageApplicationStack.lambdaCode.assign(
                   lambdaBuildOutput.s3Location
                 ),
               },
@@ -291,11 +298,16 @@ export class PipelineStack extends Stack {
           ],
         },
         {
-          stageName: "prod",
+          stageName: "prod-manual-approval",
           actions: [
             new ManualApprovalAction({
               actionName: "manual-approval-prod",
             }),
+          ],
+        },
+        {
+          stageName: "prod",
+          actions: [
             new CloudFormationCreateUpdateStackAction({
               actionName: "Deploy",
               templatePath: cdkBuildOutput.atPath(
