@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf dist && npx tsc",
+    "build": "rimraf dist && node_modules/typescript/bin/tsc --outDir dist",
     "start": "nodemon",
     "start:prod": "node dist/index.js",
     "test": "jest"
