@@ -167,7 +167,7 @@ export class PipelineStack extends Stack {
             commands: ["npm install", "cd src", "npm install", "cd ../"],
           },
           build: {
-            commands: ["npm run build", "npm run cdk synth -- -o dist"],
+            commands: ["npm run build", "npx cdk synth --all -o dist"],
           },
         },
         artifacts: {
@@ -192,7 +192,7 @@ export class PipelineStack extends Stack {
           },
         },
         artifacts: {
-          "base-directory": "dist",
+          "base-directory": "src/dist",
           files: ["index.js", "node_modules/**/*"],
         },
       }),
