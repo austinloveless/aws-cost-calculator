@@ -15,12 +15,9 @@ const gitHubRepo = process.env.GITHUB_REPO || "aws-cost-calculator";
 const gitHubBranch = process.env.GITHUB_BRANCH || "main";
 
 // Account IDs
-const devAccountId =
-  process.env.DEV_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT || "";
-const stageAccountId =
-  process.env.STAGE_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT || "";
-const prodAccountId =
-  process.env.PROD_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT || "";
+const devAccountId = process.env.DEV_ACCOUNT || "";
+const stageAccountId = process.env.STAGE_ACCOUNT || "";
+const prodAccountId = process.env.PROD_ACCOUNT || "";
 
 // Application Stacks
 const devApplicationStack = new ApplicationStack(app, "DevApplicationStack", {

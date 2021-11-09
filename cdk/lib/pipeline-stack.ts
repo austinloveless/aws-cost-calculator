@@ -43,8 +43,8 @@ export class PipelineStack extends Stack {
 
     const gitHubSecret = Secret.fromSecretNameV2(
       this,
-      "github-secret-id",
-      "aws-cost-calculator-github-secret"
+      "github-secret",
+      "github-secret"
     );
 
     const sourceOutput = new Artifact();
@@ -58,6 +58,7 @@ export class PipelineStack extends Stack {
       output: sourceOutput,
     });
 
+    //dev
     const devDeploymentRole = Role.fromRoleArn(
       this,
       "DevDeploymentRole",
@@ -66,7 +67,16 @@ export class PipelineStack extends Stack {
         mutable: false,
       }
     );
+    const devCrossAccountRole = Role.fromRoleArn(
+      this,
+      "DevCrossAccountRole",
+      `arn:aws:iam::${props.devAccountId}:role/CodePipelineCrossAccountRole`,
+      {
+        mutable: false,
+      }
+    );
 
+    //stage
     const stageDeploymentRole = Role.fromRoleArn(
       this,
       "StageDeploymentRole",
@@ -75,7 +85,16 @@ export class PipelineStack extends Stack {
         mutable: false,
       }
     );
+    const stageCrossAccountRole = Role.fromRoleArn(
+      this,
+      "StageCrossAccountRole",
+      `arn:aws:iam::${props.stageAccountId}:role/CodePipelineCrossAccountRole`,
+      {
+        mutable: false,
+      }
+    );
 
+    //prod
     const prodDeploymentRole = Role.fromRoleArn(
       this,
       "ProdDeploymentRole",
@@ -94,12 +113,30 @@ export class PipelineStack extends Stack {
       }
     );
 
+    // dev
+    const devAccountRootPrincipal = new AccountPrincipal(props.devAccountId);
+
+    //stage
+    const stageAccountRootPrincipal = new AccountPrincipal(
+      props.stageAccountId
+    );
+
+    //prod
     const prodAccountRootPrincipal = new AccountPrincipal(props.prodAccountId);
 
     const key = new Key(this, "ArtifactKey", {
       alias: "key/artifact-key",
     });
 
+    //dev
+    key.grantDecrypt(devAccountRootPrincipal);
+    key.grantDecrypt(devCrossAccountRole);
+
+    //stage
+    key.grantDecrypt(stageAccountRootPrincipal);
+    key.grantDecrypt(stageCrossAccountRole);
+
+    //prod
     key.grantDecrypt(prodAccountRootPrincipal);
     key.grantDecrypt(prodCrossAccountRole);
 
@@ -109,6 +146,16 @@ export class PipelineStack extends Stack {
       encryption: BucketEncryption.KMS,
       encryptionKey: key,
     });
+
+    // dev
+    artifactBucket.grantPut(devAccountRootPrincipal);
+    artifactBucket.grantRead(devAccountRootPrincipal);
+
+    // stage
+    artifactBucket.grantPut(stageAccountRootPrincipal);
+    artifactBucket.grantRead(stageAccountRootPrincipal);
+
+    // prod
     artifactBucket.grantPut(prodAccountRootPrincipal);
     artifactBucket.grantRead(prodAccountRootPrincipal);
 
@@ -117,7 +164,7 @@ export class PipelineStack extends Stack {
         version: "0.2",
         phases: {
           install: {
-            commands: ["npm install"],
+            commands: ["npm install", "cd src", "npm install", "cd ../"],
           },
           build: {
             commands: ["npm run build", "npm run cdk synth -- -o dist"],
@@ -129,7 +176,7 @@ export class PipelineStack extends Stack {
         },
       }),
       environment: {
-        buildImage: LinuxBuildImage.AMAZON_LINUX_2,
+        buildImage: LinuxBuildImage.AMAZON_LINUX_2_2,
       },
       encryptionKey: key,
     });
@@ -138,7 +185,7 @@ export class PipelineStack extends Stack {
         version: "0.2",
         phases: {
           install: {
-            commands: ["cd src", "npm install"],
+            commands: ["npm install", "cd src", "npm install"],
           },
           build: {
             commands: "npm run build",
@@ -150,7 +197,7 @@ export class PipelineStack extends Stack {
         },
       }),
       environment: {
-        buildImage: LinuxBuildImage.AMAZON_LINUX_2,
+        buildImage: LinuxBuildImage.AMAZON_LINUX_2_2,
       },
       encryptionKey: key,
     });
@@ -199,9 +246,12 @@ export class PipelineStack extends Stack {
                 ),
               },
               deploymentRole: devDeploymentRole,
-              cfnCapabilities: [CfnCapabilities.ANONYMOUS_IAM],
+              cfnCapabilities: [
+                CfnCapabilities.ANONYMOUS_IAM,
+                CfnCapabilities.NAMED_IAM,
+              ],
               extraInputs: [lambdaBuildOutput],
-              role: prodCrossAccountRole,
+              role: devCrossAccountRole,
             }),
           ],
         },
@@ -224,9 +274,12 @@ export class PipelineStack extends Stack {
                 ),
               },
               deploymentRole: stageDeploymentRole,
-              cfnCapabilities: [CfnCapabilities.ANONYMOUS_IAM],
+              cfnCapabilities: [
+                CfnCapabilities.ANONYMOUS_IAM,
+                CfnCapabilities.NAMED_IAM,
+              ],
               extraInputs: [lambdaBuildOutput],
-              role: prodCrossAccountRole,
+              role: stageCrossAccountRole,
             }),
           ],
         },
@@ -249,7 +302,10 @@ export class PipelineStack extends Stack {
                 ),
               },
               deploymentRole: prodDeploymentRole,
-              cfnCapabilities: [CfnCapabilities.ANONYMOUS_IAM],
+              cfnCapabilities: [
+                CfnCapabilities.ANONYMOUS_IAM,
+                CfnCapabilities.NAMED_IAM,
+              ],
               extraInputs: [lambdaBuildOutput],
               role: prodCrossAccountRole,
             }),
@@ -257,8 +313,6 @@ export class PipelineStack extends Stack {
         },
       ],
     });
-
-    pipeline.addStage;
 
     pipeline.addToRolePolicy(
       new PolicyStatement({
