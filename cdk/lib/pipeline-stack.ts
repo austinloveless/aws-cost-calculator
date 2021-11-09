@@ -189,11 +189,11 @@ export class PipelineStack extends Stack {
             commands: ["npm install", "cd src", "npm install"],
           },
           build: {
-            commands: ["npm run build:src"],
+            commands: ["npm run build"],
           },
         },
         artifacts: {
-          "base-directory": "src",
+          "base-directory": "dist",
           files: ["index.js", "node_modules/**/*"],
         },
       }),
