@@ -186,7 +186,13 @@ export class PipelineStack extends Stack {
         version: "0.2",
         phases: {
           install: {
-            commands: ["npm install", "cd src", "npm install"],
+            commands: [
+              "npm install",
+              "cd src",
+              "npm install",
+              "npm install -g typescript",
+              "ls",
+            ],
           },
           build: {
             commands: ["npm run build"],
