@@ -7,14 +7,14 @@ Object {
       "Description": "Path of the API",
       "Value": "/",
     },
-    "awscostcalculatorapiEndpointCEB131A5": Object {
+    "awscostcalculatorapitestEndpoint6B86FFC5": Object {
       "Value": Object {
         "Fn::Join": Array [
           "",
           Array [
             "https://",
             Object {
-              "Ref": "awscostcalculatorapiCA13CAA1",
+              "Ref": "awscostcalculatorapitest8211A1E0",
             },
             ".execute-api.",
             Object {
@@ -26,7 +26,7 @@ Object {
             },
             "/",
             Object {
-              "Ref": "awscostcalculatorapiDeploymentStageprod2074B5E2",
+              "Ref": "awscostcalculatorapitestDeploymentStageprod1D09C140",
             },
             "/",
           ],
@@ -35,127 +35,35 @@ Object {
     },
   },
   "Parameters": Object {
-    "AssetParametersdb433b35df5c6b35a6c06fd7ea0b9dd9b5cada1c9010985385f2548ebbeb6a86ArtifactHash42B6A961": Object {
-      "Description": "Artifact hash for asset \\"db433b35df5c6b35a6c06fd7ea0b9dd9b5cada1c9010985385f2548ebbeb6a86\\"",
+    "awscostcalculatortestLambdaSourceBucketNameParameter1DB252EB": Object {
       "Type": "String",
     },
-    "AssetParametersdb433b35df5c6b35a6c06fd7ea0b9dd9b5cada1c9010985385f2548ebbeb6a86S3BucketCB52BBBC": Object {
-      "Description": "S3 bucket for asset \\"db433b35df5c6b35a6c06fd7ea0b9dd9b5cada1c9010985385f2548ebbeb6a86\\"",
-      "Type": "String",
-    },
-    "AssetParametersdb433b35df5c6b35a6c06fd7ea0b9dd9b5cada1c9010985385f2548ebbeb6a86S3VersionKeyF0D27919": Object {
-      "Description": "S3 key for asset version \\"db433b35df5c6b35a6c06fd7ea0b9dd9b5cada1c9010985385f2548ebbeb6a86\\"",
+    "awscostcalculatortestLambdaSourceObjectKeyParameter6E534A40": Object {
       "Type": "String",
     },
   },
   "Resources": Object {
-    "awscostcalculator1974DCEF": Object {
-      "DependsOn": Array [
-        "awscostcalculatorServiceRole48262EC8",
-      ],
+    "awscostcalculatorapitest8211A1E0": Object {
       "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParametersdb433b35df5c6b35a6c06fd7ea0b9dd9b5cada1c9010985385f2548ebbeb6a86S3BucketCB52BBBC",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersdb433b35df5c6b35a6c06fd7ea0b9dd9b5cada1c9010985385f2548ebbeb6a86S3VersionKeyF0D27919",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersdb433b35df5c6b35a6c06fd7ea0b9dd9b5cada1c9010985385f2548ebbeb6a86S3VersionKeyF0D27919",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "FunctionName": "aws-cost-calculator",
-        "Handler": "dist/lambda.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "awscostcalculatorServiceRole48262EC8",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
+        "Name": "aws-cost-calculator-api-test",
       },
-      "Type": "AWS::Lambda::Function",
+      "Type": "AWS::ApiGateway::RestApi",
     },
-    "awscostcalculatorServiceRole48262EC8": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "awscostcalculatorapiAccount0214CA2F": Object {
+    "awscostcalculatorapitestAccount1451A5B8": Object {
       "DependsOn": Array [
-        "awscostcalculatorapiCA13CAA1",
+        "awscostcalculatorapitest8211A1E0",
       ],
       "Properties": Object {
         "CloudWatchRoleArn": Object {
           "Fn::GetAtt": Array [
-            "awscostcalculatorapiCloudWatchRoleF7FE395A",
+            "awscostcalculatorapitestCloudWatchRoleECAC292B",
             "Arn",
           ],
         },
       },
       "Type": "AWS::ApiGateway::Account",
     },
-    "awscostcalculatorapiCA13CAA1": Object {
-      "Properties": Object {
-        "Name": "aws-cost-calculator-api",
-      },
-      "Type": "AWS::ApiGateway::RestApi",
-    },
-    "awscostcalculatorapiCloudWatchRoleF7FE395A": Object {
+    "awscostcalculatorapitestCloudWatchRoleECAC292B": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -186,111 +94,33 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "awscostcalculatorapiDeploymentF6E916ADd9c62d99fc8311e399dd99751abb96d4": Object {
+    "awscostcalculatorapitestDeployment8A596FEC9b19afc7e7c372ac125a69182b9929fa": Object {
       "DependsOn": Array [
-        "awscostcalculatorapiGETE769F160",
-        "awscostcalculatorapigraphqlANYA9F463B3",
-        "awscostcalculatorapigraphqlBBB1800C",
+        "awscostcalculatorapitestGET92C948DE",
+        "awscostcalculatorapitestgraphqlANYBBBC8CC2",
+        "awscostcalculatorapitestgraphql4FAD4174",
       ],
       "Properties": Object {
         "Description": "Automatically created by the RestApi construct",
         "RestApiId": Object {
-          "Ref": "awscostcalculatorapiCA13CAA1",
+          "Ref": "awscostcalculatorapitest8211A1E0",
         },
       },
       "Type": "AWS::ApiGateway::Deployment",
     },
-    "awscostcalculatorapiDeploymentStageprod2074B5E2": Object {
+    "awscostcalculatorapitestDeploymentStageprod1D09C140": Object {
       "Properties": Object {
         "DeploymentId": Object {
-          "Ref": "awscostcalculatorapiDeploymentF6E916ADd9c62d99fc8311e399dd99751abb96d4",
+          "Ref": "awscostcalculatorapitestDeployment8A596FEC9b19afc7e7c372ac125a69182b9929fa",
         },
         "RestApiId": Object {
-          "Ref": "awscostcalculatorapiCA13CAA1",
+          "Ref": "awscostcalculatorapitest8211A1E0",
         },
         "StageName": "prod",
       },
       "Type": "AWS::ApiGateway::Stage",
     },
-    "awscostcalculatorapiGETApiPermissionTestawscostcalculatorawscostcalculatorapiDD133946GETBE46120A": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "awscostcalculator1974DCEF",
-            "Arn",
-          ],
-        },
-        "Principal": "apigateway.amazonaws.com",
-        "SourceArn": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":execute-api:",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              ":",
-              Object {
-                "Ref": "AWS::AccountId",
-              },
-              ":",
-              Object {
-                "Ref": "awscostcalculatorapiCA13CAA1",
-              },
-              "/test-invoke-stage/GET/",
-            ],
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "awscostcalculatorapiGETApiPermissionawscostcalculatorawscostcalculatorapiDD133946GETA3AA3713": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "awscostcalculator1974DCEF",
-            "Arn",
-          ],
-        },
-        "Principal": "apigateway.amazonaws.com",
-        "SourceArn": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":execute-api:",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              ":",
-              Object {
-                "Ref": "AWS::AccountId",
-              },
-              ":",
-              Object {
-                "Ref": "awscostcalculatorapiCA13CAA1",
-              },
-              "/",
-              Object {
-                "Ref": "awscostcalculatorapiDeploymentStageprod2074B5E2",
-              },
-              "/GET/",
-            ],
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "awscostcalculatorapiGETE769F160": Object {
+    "awscostcalculatorapitestGET92C948DE": Object {
       "Properties": Object {
         "AuthorizationType": "NONE",
         "HttpMethod": "GET",
@@ -312,7 +142,7 @@ Object {
                 ":lambda:path/2015-03-31/functions/",
                 Object {
                   "Fn::GetAtt": Array [
-                    "awscostcalculator1974DCEF",
+                    "awscostcalculatortest887ECF70",
                     "Arn",
                   ],
                 },
@@ -323,17 +153,188 @@ Object {
         },
         "ResourceId": Object {
           "Fn::GetAtt": Array [
-            "awscostcalculatorapiCA13CAA1",
+            "awscostcalculatorapitest8211A1E0",
             "RootResourceId",
           ],
         },
         "RestApiId": Object {
-          "Ref": "awscostcalculatorapiCA13CAA1",
+          "Ref": "awscostcalculatorapitest8211A1E0",
         },
       },
       "Type": "AWS::ApiGateway::Method",
     },
-    "awscostcalculatorapigraphqlANYA9F463B3": Object {
+    "awscostcalculatorapitestGETApiPermissionTestawscostcalculatorawscostcalculatorapitest762E7AC0GETC305F84D": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "awscostcalculatortest887ECF70",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "awscostcalculatorapitest8211A1E0",
+              },
+              "/test-invoke-stage/GET/",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "awscostcalculatorapitestGETApiPermissionawscostcalculatorawscostcalculatorapitest762E7AC0GET80A79607": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "awscostcalculatortest887ECF70",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "awscostcalculatorapitest8211A1E0",
+              },
+              "/",
+              Object {
+                "Ref": "awscostcalculatorapitestDeploymentStageprod1D09C140",
+              },
+              "/GET/",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "awscostcalculatorapitestgraphql4FAD4174": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Fn::GetAtt": Array [
+            "awscostcalculatorapitest8211A1E0",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "graphql",
+        "RestApiId": Object {
+          "Ref": "awscostcalculatorapitest8211A1E0",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "awscostcalculatorapitestgraphqlANYApiPermissionTestawscostcalculatorawscostcalculatorapitest762E7AC0ANYgraphql28CCD853": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "awscostcalculatortest887ECF70",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "awscostcalculatorapitest8211A1E0",
+              },
+              "/test-invoke-stage/*/graphql",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "awscostcalculatorapitestgraphqlANYApiPermissionawscostcalculatorawscostcalculatorapitest762E7AC0ANYgraphql2E57AD6C": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "awscostcalculatortest887ECF70",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "awscostcalculatorapitest8211A1E0",
+              },
+              "/",
+              Object {
+                "Ref": "awscostcalculatorapitestDeploymentStageprod1D09C140",
+              },
+              "/*/graphql",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "awscostcalculatorapitestgraphqlANYBBBC8CC2": Object {
       "Properties": Object {
         "AuthorizationType": "NONE",
         "HttpMethod": "ANY",
@@ -355,7 +356,7 @@ Object {
                 ":lambda:path/2015-03-31/functions/",
                 Object {
                   "Fn::GetAtt": Array [
-                    "awscostcalculator1974DCEF",
+                    "awscostcalculatortest887ECF70",
                     "Arn",
                   ],
                 },
@@ -365,106 +366,69 @@ Object {
           },
         },
         "ResourceId": Object {
-          "Ref": "awscostcalculatorapigraphqlBBB1800C",
+          "Ref": "awscostcalculatorapitestgraphql4FAD4174",
         },
         "RestApiId": Object {
-          "Ref": "awscostcalculatorapiCA13CAA1",
+          "Ref": "awscostcalculatorapitest8211A1E0",
         },
       },
       "Type": "AWS::ApiGateway::Method",
     },
-    "awscostcalculatorapigraphqlANYApiPermissionTestawscostcalculatorawscostcalculatorapiDD133946ANYgraphql03458E97": Object {
+    "awscostcalculatortest887ECF70": Object {
+      "DependsOn": Array [
+        "awscostcalculatortestServiceRoleC570A1B6",
+      ],
       "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "awscostcalculatortestLambdaSourceBucketNameParameter1DB252EB",
+          },
+          "S3Key": Object {
+            "Ref": "awscostcalculatortestLambdaSourceObjectKeyParameter6E534A40",
+          },
+        },
+        "FunctionName": "aws-cost-calculator-test",
+        "Handler": "dist/lambda.handler",
+        "Role": Object {
           "Fn::GetAtt": Array [
-            "awscostcalculator1974DCEF",
+            "awscostcalculatortestServiceRoleC570A1B6",
             "Arn",
           ],
         },
-        "Principal": "apigateway.amazonaws.com",
-        "SourceArn": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":execute-api:",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              ":",
-              Object {
-                "Ref": "AWS::AccountId",
-              },
-              ":",
-              Object {
-                "Ref": "awscostcalculatorapiCA13CAA1",
-              },
-              "/test-invoke-stage/*/graphql",
-            ],
-          ],
-        },
+        "Runtime": "nodejs14.x",
       },
-      "Type": "AWS::Lambda::Permission",
+      "Type": "AWS::Lambda::Function",
     },
-    "awscostcalculatorapigraphqlANYApiPermissionawscostcalculatorawscostcalculatorapiDD133946ANYgraphql74EDB646": Object {
+    "awscostcalculatortestServiceRoleC570A1B6": Object {
       "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "awscostcalculator1974DCEF",
-            "Arn",
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
           ],
+          "Version": "2012-10-17",
         },
-        "Principal": "apigateway.amazonaws.com",
-        "SourceArn": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":execute-api:",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              ":",
-              Object {
-                "Ref": "AWS::AccountId",
-              },
-              ":",
-              Object {
-                "Ref": "awscostcalculatorapiCA13CAA1",
-              },
-              "/",
-              Object {
-                "Ref": "awscostcalculatorapiDeploymentStageprod2074B5E2",
-              },
-              "/*/graphql",
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
             ],
-          ],
-        },
+          },
+        ],
       },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "awscostcalculatorapigraphqlBBB1800C": Object {
-      "Properties": Object {
-        "ParentId": Object {
-          "Fn::GetAtt": Array [
-            "awscostcalculatorapiCA13CAA1",
-            "RootResourceId",
-          ],
-        },
-        "PathPart": "graphql",
-        "RestApiId": Object {
-          "Ref": "awscostcalculatorapiCA13CAA1",
-        },
-      },
-      "Type": "AWS::ApiGateway::Resource",
+      "Type": "AWS::IAM::Role",
     },
   },
 }

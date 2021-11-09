@@ -1,13 +1,19 @@
 import "@aws-cdk/assert/jest";
 import { App } from "@aws-cdk/core";
-import { AWSCostCalculator } from "../../../cdk/lib/aws-cost-calculator";
+import { ApplicationStack } from "../../../cdk/lib/application-stack";
+
+const stage = "test";
+const applicationName = "aws-cost-calculator";
 
 test("Lambda Function created with correct values", () => {
   const app = new App();
-  const stack = new AWSCostCalculator(app, "aws-cost-calculator");
+  const stack = new ApplicationStack(app, "aws-cost-calculator", {
+    stage,
+    applicationName,
+  });
 
   expect(stack).toHaveResource("AWS::Lambda::Function", {
-    FunctionName: "aws-cost-calculator",
+    FunctionName: `${applicationName}-${stage}`,
     Runtime: "nodejs14.x",
     Handler: "dist/lambda.handler",
   });
@@ -15,16 +21,22 @@ test("Lambda Function created with correct values", () => {
 
 test("API Gateway created with correct values", () => {
   const app = new App();
-  const stack = new AWSCostCalculator(app, "aws-cost-calculator");
+  const stack = new ApplicationStack(app, "aws-cost-calculator", {
+    stage,
+    applicationName,
+  });
 
   expect(stack).toHaveResource("AWS::ApiGateway::RestApi", {
-    Name: "aws-cost-calculator-api",
+    Name: `${applicationName}-api-${stage}`,
   });
 });
 
 test("API Gateway has correct methods", () => {
   const app = new App();
-  const stack = new AWSCostCalculator(app, "aws-cost-calculator");
+  const stack = new ApplicationStack(app, "aws-cost-calculator", {
+    stage,
+    applicationName,
+  });
 
   expect(stack).toHaveResource("AWS::ApiGateway::Resource", {
     PathPart: "graphql",
