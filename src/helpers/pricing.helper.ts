@@ -23,7 +23,7 @@ export const pricingGetProducts = async (
   termType: TermTypes,
   metric: InstanceTypes | LambdaUsageTypes,
   region?: Regions
-): Promise<AWS.Pricing.GetProductsResponse | AWS.AWSError> => {
+): Promise<AWS.Pricing.GetProductsResponse | AWS.AWSError | unknown> => {
   const params = {
     Filters: buildFilter(serviceCode, termType, metric, region),
     MaxResults: 1,
@@ -32,7 +32,7 @@ export const pricingGetProducts = async (
   try {
     const products = await pricing.getProducts(params).promise();
     return products;
-  } catch (err: any) {
+  } catch (err: unknown) {
     return err;
   }
 };
