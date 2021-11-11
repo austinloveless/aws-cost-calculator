@@ -1,8 +1,9 @@
 import express from "express";
 import { graphqlHTTP } from "express-graphql";
 import dotenv from "dotenv";
-import { typeDefs } from "./graphql/typeDefs";
-import { resolvers } from "./graphql/resolvers";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { ec2TypeDefs, lambdaTypeDefs } from "./graphql/typeDefs";
+import { lambdaResolver, ec2Resolver } from "./graphql/resolvers";
 import routes from "./rest/routes/index";
 import { ValidationError } from "express-validation";
 
@@ -15,12 +16,14 @@ app.get("/health-check", (req, res) =>
   })
 );
 
+const schema = makeExecutableSchema({
+  typeDefs: [ec2TypeDefs, lambdaTypeDefs],
+  resolvers: [ec2Resolver, lambdaResolver],
+});
+
 app.use("/api", routes);
 
-app.use(
-  "/graphql",
-  graphqlHTTP({ schema: typeDefs, rootValue: resolvers, graphiql: true })
-);
+app.use("/graphql", graphqlHTTP({ schema: schema, graphiql: true }));
 
 app.use((err: any, req: any, res: any, next: any) => {
   if (err instanceof ValidationError) {
