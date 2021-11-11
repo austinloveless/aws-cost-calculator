@@ -1,6 +1,6 @@
 import { Joi } from "express-validation";
-import { regions } from "./types/regions";
-import { instanceTypes } from "./types/ec2/instance-types";
+import { regions } from "./types/regions.type";
+import { instanceTypes } from "./types/ec2/instance-type.type";
 
 export const ec2Validations = {
   // GET /api/ec2/:instanceType/:region

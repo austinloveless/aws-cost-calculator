@@ -1,6 +1,6 @@
 import express from "express";
-import ec2Routes from "./ec2";
-import lambdaRoutes from "./lambda";
+import ec2Routes from "./ec2.route";
+import lambdaRoutes from "./lambda.route";
 
 const router = express.Router();
 

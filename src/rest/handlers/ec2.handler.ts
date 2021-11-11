@@ -1,7 +1,7 @@
-import { TermTypes } from "../../types/enums/ec2";
-import { pricingGetProducts } from "../../helpers/pricing";
-import { ServiceCodes } from "../../types/enums/serviceCodes";
-import { baseError } from "../../errors/base-error";
+import { TermTypes } from "../../types/enums/ec2.enum";
+import { pricingGetProducts } from "../../helpers/pricing.helper";
+import { ServiceCodes } from "../../types/enums/serviceCodes.enum";
+import { baseError } from "../../errors/base-error.error";
 
 export const getEc2InstanceCost = async (
   req: any,

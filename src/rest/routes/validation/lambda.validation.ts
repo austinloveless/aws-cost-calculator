@@ -1,5 +1,5 @@
 import { Joi } from "express-validation";
-import { usageTypes } from "./types/lambda/usage-type";
+import { usageTypes } from "./types/lambda/usage-type.type";
 
 export const lambdaValidations = {
   // GET /api/lambda/:usageType/

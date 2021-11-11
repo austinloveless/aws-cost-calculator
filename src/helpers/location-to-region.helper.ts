@@ -1,4 +1,4 @@
-import { Regions } from "../types/enums/regions";
+import { Regions } from "../types/enums/regions.enum";
 
 const locationToRegionMap = {
   "us-gov-west-1": "AWS GovCloud (US)",

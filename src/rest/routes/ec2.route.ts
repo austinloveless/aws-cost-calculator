@@ -1,6 +1,6 @@
 import express from "express";
 import { validate } from "express-validation";
-import { ec2Validations } from "./validation/ec2-validation";
+import { ec2Validations } from "./validation/ec2.validation";
 const router = express.Router();
 
 import { getEc2InstanceCost } from "../handlers";

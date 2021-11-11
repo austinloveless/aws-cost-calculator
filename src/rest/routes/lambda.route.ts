@@ -1,6 +1,6 @@
 import express from "express";
 import { validate } from "express-validation";
-import { lambdaValidations } from "./validation/lambda-validation";
+import { lambdaValidations } from "./validation/lambda.validation";
 const router = express.Router();
 
 import { getLambdaCost } from "../handlers";

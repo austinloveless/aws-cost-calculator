@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
 import AWS from "aws-sdk";
-import { Regions } from "../types/enums/regions";
-import { TermTypes, InstanceTypes } from "../types/enums/ec2";
-import { ServiceCodes } from "../types/enums/serviceCodes";
-import { locationToRegion } from "./location-to-region";
-import { LambdaUsageTypes } from "types/enums/lambda";
+import { Regions } from "../types/enums/regions.enum";
+import { TermTypes, InstanceTypes } from "../types/enums/ec2.enum";
+import { ServiceCodes } from "../types/enums/serviceCodes.enum";
+import { locationToRegion } from "./location-to-region.helper";
+import { LambdaUsageTypes } from "../types/enums/lambda.enum";
 
 dotenv.config();
 
