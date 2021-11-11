@@ -69,7 +69,7 @@ export class ApplicationStack extends Stack {
     lambdaUsageType.addMethod("GET");
 
     // ec2
-    const ec2 = apiRoot.addResource("lambda");
+    const ec2 = apiRoot.addResource("ec2");
     const ec2InstanceType = ec2.addResource("{instanceType}");
     const ec2region = ec2InstanceType.addResource("{region}");
     ec2region.addMethod("GET");
