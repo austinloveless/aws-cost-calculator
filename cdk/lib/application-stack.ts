@@ -53,9 +53,26 @@ export class ApplicationStack extends Stack {
       }
     );
 
+    // root
     api.root.addMethod("GET");
+
+    // graphql
     const graphql = api.root.addResource("graphql");
     graphql.addMethod("ANY");
+
+    // api
+    const apiRoot = api.root.addResource("api");
+
+    // lambda
+    const lambda = apiRoot.addResource("lambda");
+    const lambdaUsageType = lambda.addResource("{usageType}");
+    lambdaUsageType.addMethod("GET");
+
+    // ec2
+    const ec2 = apiRoot.addResource("lambda");
+    const ec2InstanceType = ec2.addResource("{instanceType}");
+    const ec2region = ec2InstanceType.addResource("{region}");
+    ec2region.addMethod("GET");
 
     new CfnOutput(this, "apiPath", {
       value: api.root.path,
