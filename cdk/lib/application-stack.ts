@@ -7,6 +7,7 @@ import {
   IFunction,
   CfnParametersCode,
 } from "@aws-cdk/aws-lambda";
+import { ManagedPolicy, Role, ServicePrincipal } from "@aws-cdk/aws-iam";
 
 interface ApplicationStackProps extends StackProps {
   applicationName: string;
@@ -22,6 +23,14 @@ export class ApplicationStack extends Stack {
 
     this.lambdaCode = Code.fromCfnParameters();
 
+    const lambdaRole = new Role(this, "lambda-role", {
+      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+      roleName: "ApplicationStackLambdaRole",
+      managedPolicies: [
+        ManagedPolicy.fromAwsManagedPolicyName("AWSPriceListServiceFullAccess"),
+      ],
+    });
+
     const handler = new Function(
       this,
       `${props.applicationName}-${props.stage}`,
@@ -30,6 +39,7 @@ export class ApplicationStack extends Stack {
         code: this.lambdaCode,
         handler: "dist/lambda.handler",
         functionName: `${props.applicationName}-${props.stage}`,
+        role: lambdaRole,
       }
     );
 

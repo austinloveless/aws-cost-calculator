@@ -1,6 +1,6 @@
 import "@aws-cdk/assert/jest";
 import { App } from "@aws-cdk/core";
-import { ApplicationStack } from "../../../cdk/lib/application-stack";
+import { ApplicationStack } from "../../cdk/lib/application-stack";
 
 const stage = "test";
 const applicationName = "aws-cost-calculator";
@@ -16,6 +16,9 @@ test("Lambda Function created with correct values", () => {
     FunctionName: `${applicationName}-${stage}`,
     Runtime: "nodejs14.x",
     Handler: "dist/lambda.handler",
+    Role: {
+      "Fn::GetAtt": ["lambdaroleDFE21467", "Arn"],
+    },
   });
 });
 
