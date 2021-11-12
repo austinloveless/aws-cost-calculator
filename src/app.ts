@@ -2,10 +2,10 @@ import express from "express";
 import { graphqlHTTP } from "express-graphql";
 import dotenv from "dotenv";
 import { makeExecutableSchema } from "@graphql-tools/schema";
+import { ValidationError } from "express-validation";
 import { ec2TypeDefs, lambdaTypeDefs } from "./graphql/typeDefs";
 import { lambdaResolver, ec2Resolver } from "./graphql/resolvers";
 import routes from "./rest/routes/index";
-import { ValidationError } from "express-validation";
 
 dotenv.config();
 const app = express();
