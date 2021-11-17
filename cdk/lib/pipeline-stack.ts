@@ -342,6 +342,20 @@ export class PipelineStack extends Stack {
 
     pipeline.addToRolePolicy(
       new PolicyStatement({
+        actions: ["pricing:*"],
+        resources: ["*"],
+      })
+    );
+
+    pipeline.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        resources: [`arn:aws:iam::${props.devAccountId}:role/*`],
+      })
+    );
+
+    pipeline.addToRolePolicy(
+      new PolicyStatement({
         actions: ["sts:AssumeRole"],
         resources: [`arn:aws:iam::${props.stageAccountId}:role/*`],
       })
