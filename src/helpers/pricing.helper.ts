@@ -8,22 +8,17 @@ import { LambdaUsageTypes } from "../types/enums/lambda.enum";
 
 dotenv.config();
 
-const credentials = new AWS.SharedIniFileCredentials({
-  profile: "awsmeetupgroup",
-});
-AWS.config.credentials = credentials;
-
-const pricing = new AWS.Pricing({
-  apiVersion: "2017-10-15",
-  region: "us-east-1",
-});
-
 export const pricingGetProducts = async (
   serviceCode: ServiceCodes,
   termType: TermTypes,
   metric: InstanceTypes | LambdaUsageTypes,
   region?: Regions
 ): Promise<AWS.Pricing.GetProductsResponse | AWS.AWSError | unknown> => {
+  const pricing = new AWS.Pricing({
+    apiVersion: "2017-10-15",
+    region: process.env.AWS_REGION || "us-east-1",
+  });
+
   const params = {
     Filters: buildFilter(serviceCode, termType, metric, region),
     MaxResults: 1,
@@ -31,7 +26,6 @@ export const pricingGetProducts = async (
   };
   try {
     const products = await pricing.getProducts(params).promise();
-
     return products;
   } catch (err) {
     console.log("error thrown", err);

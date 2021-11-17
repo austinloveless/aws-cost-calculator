@@ -8,7 +8,7 @@ export const getLambdaCost = async (
   res: any
 ): Promise<Express.Response> => {
   const { usageType } = req.params;
-  const response = await pricingGetProducts(
+  const response: any = await pricingGetProducts(
     ServiceCodes.AWSLambda,
     TermTypes.OnDemand,
     usageType
@@ -16,5 +16,5 @@ export const getLambdaCost = async (
   if (response instanceof Error) {
     baseError(response, res);
   }
-  return res.json(response);
+  return res.json(response.PriceList);
 };

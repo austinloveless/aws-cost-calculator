@@ -8,7 +8,7 @@ export const getEc2InstanceCost = async (
   res: any
 ): Promise<Express.Response> => {
   const { instanceType, region } = req.params;
-  const response = await pricingGetProducts(
+  const response: any = await pricingGetProducts(
     ServiceCodes.AmazonEC2,
     TermTypes.OnDemand,
     instanceType,
@@ -17,5 +17,5 @@ export const getEc2InstanceCost = async (
   if (response instanceof Error) {
     baseError(response, res);
   }
-  return res.json(response);
+  return res.json(response.PriceList);
 };
