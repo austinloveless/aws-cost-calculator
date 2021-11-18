@@ -173,7 +173,7 @@ export class PipelineStack extends Stack {
         },
         artifacts: {
           "base-directory": "dist",
-          files: ["*ApplicationStack.template.json"],
+          files: ["*ApplicationStack*"],
         },
       }),
       environment: {
