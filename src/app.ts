@@ -3,12 +3,16 @@ import { graphqlHTTP } from "express-graphql";
 import dotenv from "dotenv";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { ValidationError } from "express-validation";
+import bodyParser from "body-parser";
 import { ec2TypeDefs, lambdaTypeDefs } from "./graphql/typeDefs";
 import { lambdaResolver, ec2Resolver } from "./graphql/resolvers";
 import routes from "./rest/routes/index";
 
 dotenv.config();
+
 const app = express();
+
+const jsonParser = bodyParser.json();
 
 app.get("/health-check", (req, res) =>
   res.json({
@@ -21,7 +25,7 @@ const schema = makeExecutableSchema({
   resolvers: [ec2Resolver, lambdaResolver],
 });
 
-app.use("/api", routes);
+app.use("/api", jsonParser, routes);
 
 app.use("/graphql", graphqlHTTP({ schema: schema, graphiql: true }));
 
