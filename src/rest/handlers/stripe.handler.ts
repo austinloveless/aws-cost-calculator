@@ -1,3 +1,4 @@
+import { baseError } from "../../errors/base-error.error";
 import {
   createCustomerSubscription,
   cancelCustomerSubscription,
@@ -9,10 +10,14 @@ export const createCustomerSubscriptionHandler = async (
   res: any
 ): Promise<Express.Response> => {
   const { email, cardInformation } = req.body;
-  return res.json({
-    statusCode: 200,
-    message: await createCustomerSubscription(email, cardInformation),
-  });
+  const response: any = await createCustomerSubscription(
+    email,
+    cardInformation
+  );
+  if (response instanceof Error) {
+    baseError(response, res);
+  }
+  return res.json({ statusCode: 200, response });
 };
 
 export const cancelCustomerSubscriptionHandler = async (
@@ -20,10 +25,14 @@ export const cancelCustomerSubscriptionHandler = async (
   res: any
 ): Promise<Express.Response> => {
   const { email } = req.body;
+  const response: any = await cancelCustomerSubscription(email);
 
+  if (response instanceof Error) {
+    baseError(response, res);
+  }
   return res.json({
     statusCode: 200,
-    message: await cancelCustomerSubscription(email),
+    response,
   });
 };
 
@@ -32,8 +41,13 @@ export const getCustomerSubscriptionHandler = async (
   res: any
 ): Promise<Express.Response> => {
   const { email } = req.body;
+
+  const response: any = await getCustomerSubscription(email);
+  if (response instanceof Error) {
+    baseError(response, res);
+  }
   return res.json({
     statusCode: 200,
-    message: await getCustomerSubscription(email),
+    response,
   });
 };

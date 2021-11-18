@@ -10,15 +10,15 @@ const app = new App();
 const applicationName = "aws-cost-calculator";
 
 // GitHub Config
-const gitHubOwner = process.env.GITHUB_OWNER || "austinloveless";
-const gitHubRepo = process.env.GITHUB_REPO || "aws-cost-calculator";
-const gitHubBranch = process.env.GITHUB_BRANCH || "main";
+const gitHubOwner = process.env.GITHUB_OWNER ?? "austinloveless";
+const gitHubRepo = process.env.GITHUB_REPO ?? "aws-cost-calculator";
+const gitHubBranch = process.env.GITHUB_BRANCH ?? "main";
 
 // Account IDs
-const rootAccountId = process.env.ROOT_ACCOUNT || "";
-const devAccountId = process.env.DEV_ACCOUNT || "";
-const stageAccountId = process.env.STAGE_ACCOUNT || "";
-const prodAccountId = process.env.PROD_ACCOUNT || "";
+const rootAccountId = process.env.ROOT_ACCOUNT ?? "";
+const devAccountId = process.env.DEV_ACCOUNT ?? "";
+const stageAccountId = process.env.STAGE_ACCOUNT ?? "";
+const prodAccountId = process.env.PROD_ACCOUNT ?? "";
 
 // Application Stacks
 const devApplicationStack = new ApplicationStack(app, "DevApplicationStack", {

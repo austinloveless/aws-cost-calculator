@@ -20,7 +20,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
 export const createCustomerSubscription = async (
   email: string,
   cardInformation: Record<any, any>
-): Promise<string> => {
+): Promise<string | unknown> => {
   const paymentMethodId = await createPaymentMethod(cardInformation);
   const customerId = await createCustomer(email, paymentMethodId);
   try {
@@ -41,41 +41,40 @@ export const createCustomerSubscription = async (
     return `Successfully added ${email} to AWS Cost Calculator Subscription`;
   } catch (error) {
     logger.error(`Subscription Error: ${error}`);
-    return `Subscription Error ${error}`;
+    return error;
   }
 };
 
 export const cancelCustomerSubscription = async (
   email: string
-): Promise<string> => {
-  //   const customer = await getCustomer(email);
+): Promise<string | unknown> => {
+  const customer = await getCustomer(email);
 
   try {
-    const deletedSubscription = await stripe.subscriptions.del(
-      "sub_1JxHEYBAgjAVYA3XOKzMRLKG"
-    );
-    console.log("deleted sub", deletedSubscription);
+    await stripe.subscriptions.del(customer.subscriptionId);
     logger.info(`Successfully deleted Customer subscription ${email}`);
     return `Successfully deleted Customer subscription ${email}`;
   } catch (error) {
     logger.error(`Error Deleting Subscription for ${email}: ${error}`);
-    return `Error Deleting Subscription for ${email}: ${error}`;
+    return error;
   }
 };
 
-export const getCustomerSubscription = async (email: string) => {
-  //   const customer = await getCustomer(email);
+export const getCustomerSubscription = async (
+  email: string
+): Promise<Record<any, any> | unknown> => {
+  const customer = await getCustomer(email);
   try {
     const subscription = await stripe.subscriptions.list({
-      customer: "cus_KcWHrd2qg1LRAz",
+      customer: customer.id,
       status: "all",
       expand: ["data.default_payment_method"],
     });
-    logger.info(`Successfully Returned customer subscription`);
+    logger.info("Successfully Returned customer subscription");
     return subscription.data;
   } catch (error) {
     logger.error(`Error Returning Subscription: ${error}`);
-    return `Error Returning Subscription: ${error}`;
+    return error;
   }
 };
 

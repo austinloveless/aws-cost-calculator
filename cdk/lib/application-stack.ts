@@ -1,4 +1,10 @@
-import { Stack, Construct, CfnOutput, StackProps } from "@aws-cdk/core";
+import {
+  Stack,
+  Construct,
+  CfnOutput,
+  StackProps,
+  RemovalPolicy,
+} from "@aws-cdk/core";
 import { LambdaRestApi } from "@aws-cdk/aws-apigateway";
 import {
   Function,
@@ -7,9 +13,16 @@ import {
   IFunction,
   CfnParametersCode,
 } from "@aws-cdk/aws-lambda";
-import { ManagedPolicy, Role, ServicePrincipal } from "@aws-cdk/aws-iam";
+import {
+  ManagedPolicy,
+  PolicyDocument,
+  PolicyStatement,
+  Role,
+  ServicePrincipal,
+} from "@aws-cdk/aws-iam";
 import { Dashboard } from "@aws-cdk/aws-cloudwatch";
 import { GraphWidget, Metric } from "@aws-cdk/aws-cloudwatch";
+import { Table, BillingMode, AttributeType } from "@aws-cdk/aws-dynamodb";
 
 interface ApplicationStackProps extends StackProps {
   applicationName: string;
@@ -23,11 +36,30 @@ export class ApplicationStack extends Stack {
   constructor(scope: Construct, id: string, props: ApplicationStackProps) {
     super(scope, id, props);
 
+    const table = new Table(this, id, {
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.DESTROY,
+      partitionKey: { name: "ipAddress", type: AttributeType.STRING },
+      sortKey: { name: "email", type: AttributeType.STRING },
+    });
+
     this.lambdaCode = Code.fromCfnParameters();
+
+    const dynamoDBFullAccess = new PolicyDocument({
+      statements: [
+        new PolicyStatement({
+          resources: [table.tableArn],
+          actions: ["dynamodb:*"],
+        }),
+      ],
+    });
 
     const lambdaRole = new Role(this, "lambda-role", {
       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
       roleName: "ApplicationStackLambdaRole",
+      inlinePolicies: {
+        DynamoDBFullAccess: dynamoDBFullAccess,
+      },
       managedPolicies: [
         ManagedPolicy.fromAwsManagedPolicyName("AWSPriceListServiceFullAccess"),
       ],
@@ -42,6 +74,10 @@ export class ApplicationStack extends Stack {
         handler: "dist/lambda.handler",
         functionName: `${props.applicationName}-${props.stage}`,
         role: lambdaRole,
+        environment: {
+          PRODUCT_ID: process.env.PRODUCT_ID ?? "",
+          STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ?? "",
+        },
       }
     );
 

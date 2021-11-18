@@ -16,7 +16,7 @@
     "cdk:deploy": "npm run cdk deploy ",
     "cdk:diff": "npm run cdk diff",
     "cdk:synth": "npm run cdk synth",
-    "lint": "eslint --ignore-path .gitignore ."
+    "lint": "eslint --ignore-path .gitignore . --fix"
   },
   "devDependencies": {
     "@aws-cdk/assert": "^1.130.0",
@@ -41,6 +41,7 @@
     "@aws-cdk/aws-codecommit": "^1.131.0",
     "@aws-cdk/aws-codepipeline": "^1.131.0",
     "@aws-cdk/aws-codepipeline-actions": "^1.131.0",
+    "@aws-cdk/aws-dynamodb": "^1.132.0",
     "@aws-cdk/aws-iam": "^1.131.0",
     "@aws-cdk/aws-kms": "^1.131.0",
     "@aws-cdk/aws-lambda": "^1.131.0",
