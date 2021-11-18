@@ -22,7 +22,10 @@ export class ApplicationStack extends Stack {
   constructor(scope: Construct, id: string, props: ApplicationStackProps) {
     super(scope, id, props);
 
-    new CloudWatchDashboard(this, "CloudWatchDashboard", props);
+    new CloudWatchDashboard(this, "CloudWatchDashboard", {
+      applicationName: props.applicationName,
+      stage: props.stage,
+    });
 
     this.lambdaCode = Code.fromCfnParameters();
 
