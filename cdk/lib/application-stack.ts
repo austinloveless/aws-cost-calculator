@@ -8,6 +8,7 @@ import {
   CfnParametersCode,
 } from "@aws-cdk/aws-lambda";
 import { ManagedPolicy, Role, ServicePrincipal } from "@aws-cdk/aws-iam";
+import { CloudWatchDashboard } from "./cloudwatch-dashboard";
 
 interface ApplicationStackProps extends StackProps {
   applicationName: string;
@@ -20,6 +21,8 @@ export class ApplicationStack extends Stack {
 
   constructor(scope: Construct, id: string, props: ApplicationStackProps) {
     super(scope, id, props);
+
+    new CloudWatchDashboard(this, "CloudWatchDashboard", props);
 
     this.lambdaCode = Code.fromCfnParameters();
 

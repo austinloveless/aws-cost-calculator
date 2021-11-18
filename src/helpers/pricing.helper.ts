@@ -28,7 +28,6 @@ export const pricingGetProducts = async (
     const products = await pricing.getProducts(params).promise();
     return products;
   } catch (err) {
-    console.log("error thrown", err);
     return err;
   }
 };
