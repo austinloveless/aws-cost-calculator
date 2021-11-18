@@ -8,7 +8,8 @@ import {
   CfnParametersCode,
 } from "@aws-cdk/aws-lambda";
 import { ManagedPolicy, Role, ServicePrincipal } from "@aws-cdk/aws-iam";
-import { CloudWatchDashboard } from "./cloudwatch-dashboard";
+import { Dashboard } from "@aws-cdk/aws-cloudwatch";
+import { GraphWidget, Metric } from "@aws-cdk/aws-cloudwatch";
 
 interface ApplicationStackProps extends StackProps {
   applicationName: string;
@@ -21,11 +22,6 @@ export class ApplicationStack extends Stack {
 
   constructor(scope: Construct, id: string, props: ApplicationStackProps) {
     super(scope, id, props);
-
-    new CloudWatchDashboard(this, "CloudWatchDashboard", {
-      applicationName: props.applicationName,
-      stage: props.stage,
-    });
 
     this.lambdaCode = Code.fromCfnParameters();
 
@@ -83,6 +79,42 @@ export class ApplicationStack extends Stack {
     new CfnOutput(this, "apiPath", {
       value: api.root.path,
       description: "Path of the API",
+    });
+
+    const dashboard = new Dashboard(
+      this,
+      `${props.applicationName}-dashboard`,
+      { dashboardName: `${props.applicationName}-dashboard` }
+    );
+    dashboard.addWidgets(
+      // Lambda
+      this.buildWidget("Duration", "AWS/Lambda"),
+      this.buildWidget("Throttle", "AWS/Lambda"),
+      this.buildWidget("Invocations", "AWS/Lambda"),
+      this.buildWidget("ConcurrentExecutions", "AWS/Lambda"),
+      this.buildWidget("Errors", "AWS/Lambda"),
+
+      // API Gateway
+      this.buildWidget("5XXError", "AWS/ApiGateway"),
+      this.buildWidget("4XXError", "AWS/ApiGateway"),
+      this.buildWidget("IntegrationLatency", "AWS/ApiGateway"),
+      this.buildWidget("Latency", "AWS/ApiGateway"),
+      this.buildWidget("Count", "AWS/ApiGateway")
+    );
+  }
+
+  buildWidget(metricName: string, namespace: string): GraphWidget {
+    return new GraphWidget({
+      width: 24,
+      title: metricName,
+      left: [
+        new Metric({
+          namespace,
+          metricName,
+          label: metricName,
+          statistic: "avg",
+        }),
+      ],
     });
   }
 }
