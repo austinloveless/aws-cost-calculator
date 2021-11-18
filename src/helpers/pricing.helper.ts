@@ -5,6 +5,7 @@ import { TermTypes, InstanceTypes } from "../types/enums/ec2.enum";
 import { ServiceCodes } from "../types/enums/serviceCodes.enum";
 import { locationToRegion } from "./location-to-region.helper";
 import { LambdaUsageTypes } from "../types/enums/lambda.enum";
+import { logger } from "../logger/logger";
 
 dotenv.config();
 
@@ -26,8 +27,10 @@ export const pricingGetProducts = async (
   };
   try {
     const products = await pricing.getProducts(params).promise();
+    logger.info(`Successfully Returned ${serviceCode} product prices`);
     return products;
   } catch (err) {
+    logger.error(err);
     return err;
   }
 };
