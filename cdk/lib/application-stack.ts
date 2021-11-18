@@ -105,7 +105,6 @@ export class ApplicationStack extends Stack {
 
   buildWidget(metricName: string, namespace: string): GraphWidget {
     return new GraphWidget({
-      width: 24,
       title: metricName,
       left: [
         new Metric({
