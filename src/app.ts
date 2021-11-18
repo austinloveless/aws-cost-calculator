@@ -7,12 +7,12 @@ import bodyParser from "body-parser";
 import { ec2TypeDefs, lambdaTypeDefs } from "./graphql/typeDefs";
 import { lambdaResolver, ec2Resolver } from "./graphql/resolvers";
 import routes from "./rest/routes/index";
+import { checkEnvVars } from "./helpers/check-env-variables.helper";
 
 dotenv.config();
-
 const app = express();
-
 const jsonParser = bodyParser.json();
+checkEnvVars();
 
 app.get("/health-check", (req, res) =>
   res.json({

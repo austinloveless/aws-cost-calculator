@@ -32,6 +32,7 @@
     "ts-node": "^10.4.0"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.41.0",
     "@graphql-tools/schema": "^8.3.1",
     "@graphql-tools/utils": "^8.5.3",
     "aws-sdk": "^2.1025.0",

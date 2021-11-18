@@ -1,6 +1,7 @@
 import app from "./app";
+import { logger } from "./logger/logger";
 const port = 8080;
 
 app.listen(port, () => {
-  console.log(`server started at http://localhost:${port}`);
+  logger.info(`server started at http://localhost:${port}`);
 });

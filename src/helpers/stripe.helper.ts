@@ -1,17 +1,12 @@
 import Stripe from "stripe";
 import { logger } from "../logger/logger";
-
-if (!process.env.STRIPE_SECRET_KEY || !process.env.PRODUCT_ID) {
-  logger.error("The .env file is not configured.");
-  process.env.STRIPE_SECRET_KEY
-    ? ""
-    : logger.error("Add STRIPE_SECRET_KEY to your .env file.");
-
-  process.env.PRODUCT_ID
-    ? ""
-    : logger.error("Add PRODUCT_ID to your .env file.");
-  process.exit();
-}
+import {
+  deleteItem,
+  getItemByEmail,
+  getItemByIpAddress,
+  putItemWithCustomerData,
+  updateItem,
+} from "./dynamodb.helper";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
   apiVersion: "2020-08-27",
@@ -19,12 +14,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
 
 export const createCustomerSubscription = async (
   email: string,
-  cardInformation: Record<any, any>
+  cardInformation: Record<any, any>,
+  ipAddress: string
 ): Promise<string | unknown> => {
   const paymentMethodId = await createPaymentMethod(cardInformation);
   const customerId = await createCustomer(email, paymentMethodId);
   try {
-    await stripe.subscriptions.create({
+    const subscription = await stripe.subscriptions.create({
       customer: customerId,
       items: [
         {
@@ -38,6 +34,18 @@ export const createCustomerSubscription = async (
     logger.info(
       `Successfully added ${email} to AWS Cost Calculator Subscription`
     );
+    const customerRecord = await getItemByIpAddress(email);
+    if (!customerRecord) {
+      await putItemWithCustomerData(
+        ipAddress,
+        email,
+        customerId,
+        subscription.id
+      );
+    } else {
+      await updateItem(ipAddress, email, customerId, subscription.id);
+    }
+
     return `Successfully added ${email} to AWS Cost Calculator Subscription`;
   } catch (error) {
     logger.error(`Subscription Error: ${error}`);
@@ -48,11 +56,12 @@ export const createCustomerSubscription = async (
 export const cancelCustomerSubscription = async (
   email: string
 ): Promise<string | unknown> => {
-  const customer = await getCustomer(email);
+  const customer = await getItemByEmail(email);
 
   try {
     await stripe.subscriptions.del(customer.subscriptionId);
     logger.info(`Successfully deleted Customer subscription ${email}`);
+    await deleteItem(email);
     return `Successfully deleted Customer subscription ${email}`;
   } catch (error) {
     logger.error(`Error Deleting Subscription for ${email}: ${error}`);
@@ -63,7 +72,7 @@ export const cancelCustomerSubscription = async (
 export const getCustomerSubscription = async (
   email: string
 ): Promise<Record<any, any> | unknown> => {
-  const customer = await getCustomer(email);
+  const customer = await getItemByEmail(email);
   try {
     const subscription = await stripe.subscriptions.list({
       customer: customer.id,
@@ -76,11 +85,6 @@ export const getCustomerSubscription = async (
     logger.error(`Error Returning Subscription: ${error}`);
     return error;
   }
-};
-
-const getCustomer = async (email: string): Promise<Record<any, any>> => {
-  // get customerID from DynamoDB
-  return {};
 };
 
 const createCustomer = async (

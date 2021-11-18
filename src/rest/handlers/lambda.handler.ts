@@ -2,12 +2,19 @@ import { TermTypes } from "../../types/enums/ec2.enum";
 import { pricingGetProducts } from "../../helpers/pricing.helper";
 import { ServiceCodes } from "../../types/enums/serviceCodes.enum";
 import { baseError } from "../../errors/base-error.error";
+import {
+  putItem,
+  updateNumberOfRequestsCount,
+} from "../../helpers/dynamodb.helper";
 
 export const getLambdaCost = async (
   req: any,
   res: any
 ): Promise<Express.Response> => {
   const { usageType } = req.params;
+  const ipAddress = req.socket.remoteAddress;
+  await putItem(ipAddress);
+  await updateNumberOfRequestsCount(ipAddress);
   const response: any = await pricingGetProducts(
     ServiceCodes.AWSLambda,
     TermTypes.OnDemand,

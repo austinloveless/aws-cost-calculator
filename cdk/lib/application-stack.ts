@@ -40,7 +40,6 @@ export class ApplicationStack extends Stack {
       billingMode: BillingMode.PAY_PER_REQUEST,
       removalPolicy: RemovalPolicy.DESTROY,
       partitionKey: { name: "ipAddress", type: AttributeType.STRING },
-      sortKey: { name: "email", type: AttributeType.STRING },
     });
 
     this.lambdaCode = Code.fromCfnParameters();
@@ -77,6 +76,8 @@ export class ApplicationStack extends Stack {
         environment: {
           PRODUCT_ID: process.env.PRODUCT_ID ?? "",
           STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ?? "",
+          NODE_ENV: "production",
+          TABLE_NAME: table.tableName,
         },
       }
     );

@@ -17,7 +17,7 @@ export const pricingGetProducts = async (
 ): Promise<AWS.Pricing.GetProductsResponse | AWS.AWSError | unknown> => {
   const pricing = new AWS.Pricing({
     apiVersion: "2017-10-15",
-    region: process.env.AWS_REGION || "us-east-1",
+    region: process.env.AWS_REGION,
   });
 
   const params = {

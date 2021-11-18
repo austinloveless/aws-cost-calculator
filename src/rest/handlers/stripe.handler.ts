@@ -12,7 +12,8 @@ export const createCustomerSubscriptionHandler = async (
   const { email, cardInformation } = req.body;
   const response: any = await createCustomerSubscription(
     email,
-    cardInformation
+    cardInformation,
+    req.socket.remoteAddress
   );
   if (response instanceof Error) {
     baseError(response, res);
