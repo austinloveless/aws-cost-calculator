@@ -58,7 +58,19 @@ export class ApplicationStack extends Stack {
       ],
     });
 
-    const resetNumnberOfRequests = new Function(this, "ResetNumberOfRequests", {
+    const resetNumberOfRequestsRole = new Role(
+      this,
+      "resetNumberOfRequests-role",
+      {
+        assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+        roleName: "ApplicationStackLambdaRole",
+        inlinePolicies: {
+          DynamoDBFullAccess: dynamoDBFullAccess,
+        },
+      }
+    );
+
+    const resetNumberOfRequests = new Function(this, "ResetNumberOfRequests", {
       code: new InlineCode(
         fs.readFileSync("cdk/lib/lambda/reset-number-of-requests.js", {
           encoding: "utf-8",
@@ -66,6 +78,7 @@ export class ApplicationStack extends Stack {
       ),
       handler: "index.handler",
       runtime: Runtime.NODEJS_14_X,
+      role: resetNumberOfRequestsRole,
       environment: {
         NODE_ENV: "production",
         TABLE_NAME: table.tableName,
@@ -76,7 +89,7 @@ export class ApplicationStack extends Stack {
     const rule = new Rule(this, "Rule", {
       schedule: Schedule.expression("cron(0 0 * * ? *)"),
     });
-    rule.addTarget(new LambdaFunction(resetNumnberOfRequests));
+    rule.addTarget(new LambdaFunction(resetNumberOfRequests));
 
     const lambdaRole = new Role(this, "lambda-role", {
       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
