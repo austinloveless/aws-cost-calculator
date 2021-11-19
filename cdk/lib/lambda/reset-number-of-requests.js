@@ -9,7 +9,10 @@ exports.handler = async function (event, context) {
   };
   try {
     const { Items } = await dynamoDB.scan(params).promise();
+
     await resetNumberOfRequests(Items);
+    console.log("Successfully reset number of requests for all users.");
+    return;
   } catch (error) {
     console.log("ERROR:", error);
   }
