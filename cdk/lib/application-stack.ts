@@ -64,7 +64,7 @@ export class ApplicationStack extends Stack {
           encoding: "utf-8",
         })
       ),
-      handler: "reset-number-of-requests.handler",
+      handler: "index.handler",
       runtime: Runtime.NODEJS_14_X,
       environment: {
         NODE_ENV: "production",
