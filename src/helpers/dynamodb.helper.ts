@@ -1,49 +1,34 @@
+import { logger } from "../logger/logger";
+
 const AWS = require("aws-sdk");
 const dynamoDB = new AWS.DynamoDB.DocumentClient({
   region: process.env.AWS_REGION,
 });
 
-export const putItem = async (ipAddress: string) => {
-  try {
-    const putItem = await dynamoDB
-      .put({
-        Item: {
-          ipAddress,
-          accessDenied: false,
-          numberOfRequests: 0,
-        },
-        TableName: process.env.TABLE_NAME,
-      })
-      .promise();
-    console.log("put", putItem);
-  } catch (error) {
-    console.log("put error", error);
-  }
-};
-
-export const putItemWithCustomerData = async (
+export const putItem = async (
   ipAddress: string,
-  email: string,
-  customerId: string,
-  subscriptionId: string
+  email?: string,
+  customerId?: string,
+  subscriptionId?: string
 ) => {
   try {
-    const putItem = await dynamoDB
+    await dynamoDB
       .put({
         Item: {
           ipAddress,
-          email: email,
           accessDenied: false,
           numberOfRequests: 0,
+          email,
           customerId,
           subscriptionId,
         },
         TableName: process.env.TABLE_NAME,
       })
       .promise();
-    console.log("put", putItem);
+    logger.info(`Successfully put Item: ${ipAddress}`);
   } catch (error) {
-    console.log("put error", error);
+    logger.error(`Error putting item: ${ipAddress}`);
+    return error;
   }
 };
 
@@ -54,7 +39,7 @@ export const updateItem = async (
   subscriptionId: string
 ) => {
   try {
-    const putItem = await dynamoDB
+    await dynamoDB
       .update({
         Key: {
           ipAddress,
@@ -69,8 +54,11 @@ export const updateItem = async (
         },
       })
       .promise();
-    console.log("put", putItem);
-  } catch (error) {}
+    logger.info(`Successfully updated Item: ${ipAddress}`);
+  } catch (error) {
+    logger.error(`Error updating item: ${ipAddress}`);
+    return error;
+  }
 };
 
 export const getItemByIpAddress = async (ipAddress: string) => {
@@ -79,13 +67,16 @@ export const getItemByIpAddress = async (ipAddress: string) => {
       .get({
         TableName: process.env.TABLE_NAME,
         Key: {
-          ipAddress,
+          ipAddress: ipAddress,
         },
       })
       .promise();
-    console.log("getItem by ip", getItem);
+    logger.info(`Successfully got Item By IpAddress: ${ipAddress}`);
     return getItem;
-  } catch (error) {}
+  } catch (error) {
+    logger.error(`Error returning Item By IpAddress: ${ipAddress}`);
+    return error;
+  }
 };
 
 export const getItemByEmail = async (email: string) => {
@@ -98,35 +89,29 @@ export const getItemByEmail = async (email: string) => {
         },
       })
       .promise();
+    logger.info(`Successfully got Item By Email: ${email}`);
     return getItem;
-    console.log("get item by email", getItem);
-  } catch (error) {}
-};
-
-export const deleteItem = async (email: string) => {
-  try {
-    const deleteItem = await dynamoDB
-      .deleteItem({
-        TableName: process.env.TABLE_NAME,
-        Key: {
-          email,
-        },
-      })
-      .promise();
-    console.log("deleted", deleteItem);
-  } catch (error) {}
+  } catch (error) {
+    logger.error(`Error returning Item By Email: ${email}`);
+    return error;
+  }
 };
 
 export const updateNumberOfRequestsCount = async (ipAddress: string) => {
   try {
-    const updateItem = await dynamoDB
-      .updateItem({
+    await dynamoDB
+      .update({
         TableName: process.env.TABLE_NAME,
         Key: { ipAddress },
-        ExpressionAttributeValues: { ":inc": { N: "1" } },
-        UpdateExpression: "ADD numberOfRequests :inc",
+        UpdateExpression: "ADD numberOfRequests :val",
+        ExpressionAttributeValues: {
+          ":val": 1,
+        },
       })
       .promise();
-    console.log("update item number of request count", updateItem);
-  } catch (error) {}
+    logger.info(`Updated Number Of Requests Count for ${ipAddress}`);
+  } catch (error) {
+    logger.info(`Error Updating Number Of Requests for ${ipAddress}`);
+    return error;
+  }
 };

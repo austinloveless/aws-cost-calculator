@@ -1,10 +1,9 @@
 import Stripe from "stripe";
 import { logger } from "../logger/logger";
 import {
-  deleteItem,
   getItemByEmail,
   getItemByIpAddress,
-  putItemWithCustomerData,
+  putItem,
   updateItem,
 } from "./dynamodb.helper";
 
@@ -17,6 +16,7 @@ export const createCustomerSubscription = async (
   cardInformation: Record<any, any>,
   ipAddress: string
 ): Promise<string | unknown> => {
+  const priceId = await createPriceId();
   const paymentMethodId = await createPaymentMethod(cardInformation);
   const customerId = await createCustomer(email, paymentMethodId);
   try {
@@ -24,7 +24,7 @@ export const createCustomerSubscription = async (
       customer: customerId,
       items: [
         {
-          price: process.env.PRODUCT_ID,
+          price: priceId,
           quantity: 1,
         },
       ],
@@ -34,16 +34,11 @@ export const createCustomerSubscription = async (
     logger.info(
       `Successfully added ${email} to AWS Cost Calculator Subscription`
     );
-    const customerRecord = await getItemByIpAddress(email);
-    if (!customerRecord) {
-      await putItemWithCustomerData(
-        ipAddress,
-        email,
-        customerId,
-        subscription.id
-      );
-    } else {
+    const customerRecord = await getItemByIpAddress(ipAddress);
+    if (customerRecord && customerRecord.Item) {
       await updateItem(ipAddress, email, customerId, subscription.id);
+    } else {
+      await putItem(ipAddress, email, customerId, subscription.id);
     }
 
     return `Successfully added ${email} to AWS Cost Calculator Subscription`;
@@ -57,11 +52,9 @@ export const cancelCustomerSubscription = async (
   email: string
 ): Promise<string | unknown> => {
   const customer = await getItemByEmail(email);
-
   try {
     await stripe.subscriptions.del(customer.subscriptionId);
     logger.info(`Successfully deleted Customer subscription ${email}`);
-    await deleteItem(email);
     return `Successfully deleted Customer subscription ${email}`;
   } catch (error) {
     logger.error(`Error Deleting Subscription for ${email}: ${error}`);
@@ -84,6 +77,21 @@ export const getCustomerSubscription = async (
   } catch (error) {
     logger.error(`Error Returning Subscription: ${error}`);
     return error;
+  }
+};
+
+const createPriceId = async (): Promise<string> => {
+  try {
+    const price = await stripe.prices.create({
+      unit_amount: 500,
+      currency: "usd",
+      recurring: { interval: "month" },
+      product: process.env.PRODUCT_ID,
+    });
+    return price.id;
+  } catch (error) {
+    logger.error(`Price Error: ${error}`);
+    return `Price Error: ${error}`;
   }
 };
 
