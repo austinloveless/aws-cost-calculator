@@ -1,14 +1,7 @@
-# Welcome to your CDK TypeScript project!
+# AWS COST CALCULATOR
 
-This is a blank project for TypeScript development with CDK.
+This application return cost results for both AWS Lambda based on `UsageTypes` and EC2 based on `InstanceTypes` and `Region`.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+Infrastructure managed through the CDK.
 
-## Useful commands
-
- * `npm run build`   compile typescript to js
- * `npm run watch`   watch for changes and compile
- * `npm run test`    perform the jest unit tests
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk synth`       emits the synthesized CloudFormation template
+Application written in Typescript
