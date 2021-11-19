@@ -16,7 +16,6 @@ export const putItem = async (
       .put({
         Item: {
           ipAddress,
-          accessDenied: false,
           numberOfRequests: 0,
           email,
           customerId,

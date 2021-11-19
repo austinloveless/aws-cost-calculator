@@ -4,6 +4,7 @@ import {
   CfnOutput,
   StackProps,
   RemovalPolicy,
+  Duration,
 } from "@aws-cdk/core";
 import { LambdaRestApi } from "@aws-cdk/aws-apigateway";
 import {
@@ -12,6 +13,7 @@ import {
   Code,
   IFunction,
   CfnParametersCode,
+  InlineCode,
 } from "@aws-cdk/aws-lambda";
 import {
   ManagedPolicy,
@@ -20,9 +22,12 @@ import {
   Role,
   ServicePrincipal,
 } from "@aws-cdk/aws-iam";
+import { Rule, Schedule } from "@aws-cdk/aws-events";
+import { LambdaFunction } from "@aws-cdk/aws-events-targets";
 import { Dashboard } from "@aws-cdk/aws-cloudwatch";
 import { GraphWidget, Metric } from "@aws-cdk/aws-cloudwatch";
 import { Table, BillingMode, AttributeType } from "@aws-cdk/aws-dynamodb";
+import fs from "fs";
 
 interface ApplicationStackProps extends StackProps {
   applicationName: string;
@@ -52,6 +57,26 @@ export class ApplicationStack extends Stack {
         }),
       ],
     });
+
+    const resetNumnberOfRequests = new Function(this, "ResetNumberOfRequests", {
+      code: new InlineCode(
+        fs.readFileSync("./lambda/reset-number-of-requests.js", {
+          encoding: "utf-8",
+        })
+      ),
+      handler: "reset-number-of-requests.handler",
+      runtime: Runtime.NODEJS_14_X,
+      environment: {
+        NODE_ENV: "production",
+        TABLE_NAME: table.tableName,
+      },
+    });
+
+    // Run 00:00 PM every Day
+    const rule = new Rule(this, "Rule", {
+      schedule: Schedule.expression("cron(0 0 * * *)"),
+    });
+    rule.addTarget(new LambdaFunction(resetNumnberOfRequests));
 
     const lambdaRole = new Role(this, "lambda-role", {
       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
