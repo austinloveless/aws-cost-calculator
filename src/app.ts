@@ -16,31 +16,23 @@ import {
 } from "./graphql/resolvers";
 import routes from "./rest/routes/index";
 import { checkEnvVars } from "./helpers/check-env-variables.helper";
-const requestIp = require("request-ip");
+import { authorizeIpAddressByUsage } from "./middleware/authorization";
 
 dotenv.config();
 const app = express();
 const jsonParser = bodyParser.json();
 checkEnvVars();
 
-app.get("/health-check", (req, res) =>
-  res.json({
-    status: "ok",
-  })
-);
-
 const schema = makeExecutableSchema({
   typeDefs: [ec2TypeDefs, lambdaTypeDefs, stripeTypeDefs],
   resolvers: [ec2Resolver, lambdaResolver, stripeResolver],
 });
 
+app.use(authorizeIpAddressByUsage);
+
 app.use("/api", jsonParser, routes);
 
-app.use(
-  "/graphql",
-  requestIp.mw(),
-  graphqlHTTP({ schema: schema, graphiql: true })
-);
+app.use("/graphql", graphqlHTTP({ schema: schema, graphiql: true }));
 
 app.use((err: any, req: any, res: any, next: any) => {
   if (err instanceof ValidationError) {

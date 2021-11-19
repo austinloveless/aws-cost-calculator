@@ -15,7 +15,6 @@ export const lambdaResolver = {
       const ipAddress = req.client._peername.address;
 
       const customerRecord = await getItemByIpAddress(ipAddress);
-      console.log(customerRecord);
       if (!customerRecord) {
         await putItem(ipAddress);
       }

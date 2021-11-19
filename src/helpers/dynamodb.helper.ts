@@ -26,6 +26,7 @@ export const putItem = async (
       })
       .promise();
     logger.info(`Successfully put Item: ${ipAddress}`);
+    return;
   } catch (error) {
     logger.error(`Error putting item: ${ipAddress}`);
     return error;
@@ -45,7 +46,6 @@ export const getItemByIpAddress = async (ipAddress: string) => {
     logger.info(`Successfully got Item By IpAddress: ${ipAddress}`);
     return getItem.Item;
   } catch (error) {
-    console.log(error);
     logger.error(`Error returning Item By IpAddress: ${ipAddress}, ${error}`);
     return error;
   }
@@ -64,6 +64,7 @@ export const updateNumberOfRequestsCount = async (ipAddress: string) => {
       })
       .promise();
     logger.info(`Updated Number Of Requests Count for ${ipAddress}`);
+    return;
   } catch (error) {
     logger.info(`Error Updating Number Of Requests for ${ipAddress}`);
     return error;
