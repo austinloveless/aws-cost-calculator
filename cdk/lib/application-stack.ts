@@ -63,7 +63,7 @@ export class ApplicationStack extends Stack {
       "resetNumberOfRequests-role",
       {
         assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-        roleName: "ApplicationStackLambdaRole",
+        roleName: "ResetNumberOfRequestsRole",
         inlinePolicies: {
           DynamoDBFullAccess: dynamoDBFullAccess,
         },

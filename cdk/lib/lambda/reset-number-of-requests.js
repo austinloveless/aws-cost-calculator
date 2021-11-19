@@ -4,5 +4,13 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient({
 });
 
 exports.handler = async function (event, context) {
-  console.log("EVENT: \n" + JSON.stringify(event, null, 2));
+  const params = {
+    TableName: process.env.TABLE_NAME,
+  };
+  try {
+    const result = await dynamoDB.scan(params).promise();
+    console.log("result", result);
+  } catch (e) {
+    console.log("error", e);
+  }
 };
