@@ -15,13 +15,13 @@ router
   .post(createCustomerSubscriptionHandler);
 
 router
-  .route("/cancel-subscription/:email")
-  /** GET /api/stripe/cancel-subscription/:email Cancels Subscription */
+  .route("/cancel-subscription")
+  /** GET /api/stripe/cancel-subscription Cancels Subscription */
   .get(cancelCustomerSubscriptionHandler);
 
 router
-  .route("/get-subscription/:email")
-  /** GET /api/stripe/get-subscription/:email Returns Subscription Details */
+  .route("/get-subscription/")
+  /** GET /api/stripe/get-subscription/ Returns Subscription Details */
   .get(getCustomerSubscriptionHandler);
 
 export default router;

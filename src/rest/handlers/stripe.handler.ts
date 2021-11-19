@@ -25,8 +25,9 @@ export const cancelCustomerSubscriptionHandler = async (
   req: any,
   res: any
 ): Promise<Express.Response> => {
-  const { email } = req.body;
-  const response: any = await cancelCustomerSubscription(email);
+  const response: any = await cancelCustomerSubscription(
+    req.socket.remoteAddress
+  );
 
   if (response instanceof Error) {
     baseError(response, res);
@@ -41,9 +42,7 @@ export const getCustomerSubscriptionHandler = async (
   req: any,
   res: any
 ): Promise<Express.Response> => {
-  const { email } = req.body;
-
-  const response: any = await getCustomerSubscription(email);
+  const response: any = await getCustomerSubscription(req.socket.remoteAddress);
   if (response instanceof Error) {
     baseError(response, res);
   }

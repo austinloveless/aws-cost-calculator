@@ -4,10 +4,19 @@ import dotenv from "dotenv";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { ValidationError } from "express-validation";
 import bodyParser from "body-parser";
-import { ec2TypeDefs, lambdaTypeDefs } from "./graphql/typeDefs";
-import { lambdaResolver, ec2Resolver } from "./graphql/resolvers";
+import {
+  ec2TypeDefs,
+  lambdaTypeDefs,
+  stripeTypeDefs,
+} from "./graphql/typeDefs";
+import {
+  lambdaResolver,
+  ec2Resolver,
+  stripeResolver,
+} from "./graphql/resolvers";
 import routes from "./rest/routes/index";
 import { checkEnvVars } from "./helpers/check-env-variables.helper";
+const requestIp = require("request-ip");
 
 dotenv.config();
 const app = express();
@@ -21,13 +30,17 @@ app.get("/health-check", (req, res) =>
 );
 
 const schema = makeExecutableSchema({
-  typeDefs: [ec2TypeDefs, lambdaTypeDefs],
-  resolvers: [ec2Resolver, lambdaResolver],
+  typeDefs: [ec2TypeDefs, lambdaTypeDefs, stripeTypeDefs],
+  resolvers: [ec2Resolver, lambdaResolver, stripeResolver],
 });
 
 app.use("/api", jsonParser, routes);
 
-app.use("/graphql", graphqlHTTP({ schema: schema, graphiql: true }));
+app.use(
+  "/graphql",
+  requestIp.mw(),
+  graphqlHTTP({ schema: schema, graphiql: true })
+);
 
 app.use((err: any, req: any, res: any, next: any) => {
   if (err instanceof ValidationError) {

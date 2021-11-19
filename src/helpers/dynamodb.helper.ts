@@ -32,35 +32,6 @@ export const putItem = async (
   }
 };
 
-export const updateItem = async (
-  ipAddress: string,
-  email: string,
-  customerId: string,
-  subscriptionId: string
-) => {
-  try {
-    await dynamoDB
-      .update({
-        Key: {
-          ipAddress,
-        },
-        TableName: process.env.TABLE_NAME,
-
-        UpdateExpression: `set email = :email, customerId = :customerId, subscriptionId = :subscriptionId`,
-        ExpressionAttributeValues: {
-          ":email": email,
-          ":customerId": customerId,
-          ":subscriptionId": subscriptionId,
-        },
-      })
-      .promise();
-    logger.info(`Successfully updated Item: ${ipAddress}`);
-  } catch (error) {
-    logger.error(`Error updating item: ${ipAddress}`);
-    return error;
-  }
-};
-
 export const getItemByIpAddress = async (ipAddress: string) => {
   try {
     const getItem = await dynamoDB
@@ -72,27 +43,10 @@ export const getItemByIpAddress = async (ipAddress: string) => {
       })
       .promise();
     logger.info(`Successfully got Item By IpAddress: ${ipAddress}`);
-    return getItem;
+    return getItem.Item;
   } catch (error) {
-    logger.error(`Error returning Item By IpAddress: ${ipAddress}`);
-    return error;
-  }
-};
-
-export const getItemByEmail = async (email: string) => {
-  try {
-    const getItem = await dynamoDB
-      .get({
-        TableName: process.env.TABLE_NAME,
-        Key: {
-          email,
-        },
-      })
-      .promise();
-    logger.info(`Successfully got Item By Email: ${email}`);
-    return getItem;
-  } catch (error) {
-    logger.error(`Error returning Item By Email: ${email}`);
+    console.log(error);
+    logger.error(`Error returning Item By IpAddress: ${ipAddress}, ${error}`);
     return error;
   }
 };
