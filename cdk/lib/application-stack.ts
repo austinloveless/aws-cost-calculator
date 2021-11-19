@@ -74,7 +74,7 @@ export class ApplicationStack extends Stack {
 
     // Run 00:00 PM every Day
     const rule = new Rule(this, "Rule", {
-      schedule: Schedule.expression("cron(0 0 * * *)"),
+      schedule: Schedule.expression("cron(0 0 * * ? *)"),
     });
     rule.addTarget(new LambdaFunction(resetNumnberOfRequests));
 
