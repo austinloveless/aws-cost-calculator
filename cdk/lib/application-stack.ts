@@ -60,7 +60,7 @@ export class ApplicationStack extends Stack {
 
     const resetNumnberOfRequests = new Function(this, "ResetNumberOfRequests", {
       code: new InlineCode(
-        fs.readFileSync("./lambda/reset-number-of-requests.js", {
+        fs.readFileSync("cdk/lib/lambda/reset-number-of-requests.js", {
           encoding: "utf-8",
         })
       ),
