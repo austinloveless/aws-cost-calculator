@@ -13,7 +13,7 @@
     "test:unit": "jest src/test/unit",
     "test:integration": "jest src/test/integration",
     "cdk": "cdk --profile ${AWS_PROFILE}",
-    "cdk:deploy": "npm run cdk deploy ",
+    "cdk:deploy": "npm run cdk deploy",
     "cdk:diff": "npm run cdk diff",
     "cdk:synth": "npm run cdk synth",
     "lint": "eslint --ignore-path .gitignore . --fix"

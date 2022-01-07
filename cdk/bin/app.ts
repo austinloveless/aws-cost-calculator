@@ -2,7 +2,9 @@
 import * as dotenv from "dotenv";
 import { App } from "@aws-cdk/core";
 import { ApplicationStack } from "../lib/application-stack";
-import { PipelineStack } from "../lib/pipeline-stack";
+import { TrunkPipelineStack } from "../lib/trunk-pipeline-stack";
+import { EnvironmentBasedPipelineStack } from "../lib/env-based-pipeline-stack";
+import { GitFlowBasedPipelineStack } from "../lib/gitflow-pipeline-stack";
 
 dotenv.config();
 const app = new App();
@@ -12,7 +14,6 @@ const applicationName = "aws-cost-calculator";
 // GitHub Config
 const gitHubOwner = process.env.GITHUB_OWNER ?? "austinloveless";
 const gitHubRepo = process.env.GITHUB_REPO ?? "aws-cost-calculator";
-const gitHubBranch = process.env.GITHUB_BRANCH ?? "main";
 
 // Account IDs
 const rootAccountId = process.env.ROOT_ACCOUNT ?? "";
@@ -40,8 +41,8 @@ const prodApplicationStack = new ApplicationStack(app, "ProdApplicationStack", {
   stage: "prod",
 });
 
-// Pipeline Stack
-new PipelineStack(app, "CrossAccountPipelineStack", {
+// Trunk Pipeline Stack
+new TrunkPipelineStack(app, "TrunkCrossAccountPipelineStack", {
   devApplicationStack,
   stageApplicationStack,
   prodApplicationStack,
@@ -51,5 +52,30 @@ new PipelineStack(app, "CrossAccountPipelineStack", {
   stageAccountId,
   gitHubOwner,
   gitHubRepo,
-  gitHubBranch,
+});
+
+// Environment Based pipeline Stack
+new EnvironmentBasedPipelineStack(app, "EnvBasedCrossAccountPipelineStack", {
+  devApplicationStack,
+  stageApplicationStack,
+  prodApplicationStack,
+  rootAccountId,
+  prodAccountId,
+  devAccountId,
+  stageAccountId,
+  gitHubOwner,
+  gitHubRepo,
+});
+
+// GitFlow Based pipeline Stack
+new GitFlowBasedPipelineStack(app, "GitFlowCrossAccountPipelineStack", {
+  devApplicationStack,
+  stageApplicationStack,
+  prodApplicationStack,
+  rootAccountId,
+  prodAccountId,
+  devAccountId,
+  stageAccountId,
+  gitHubOwner,
+  gitHubRepo,
 });

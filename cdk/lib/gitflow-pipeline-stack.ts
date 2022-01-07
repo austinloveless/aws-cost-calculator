@@ -8,7 +8,7 @@ import {
   CfnCapabilities,
 } from "@aws-cdk/core";
 
-import { ApplicationStack } from "../lib/application-stack";
+import { ApplicationStack } from "./application-stack";
 import {
   BuildSpec,
   LinuxBuildImage,
@@ -35,10 +35,9 @@ export interface PipelineStackProps extends StackProps {
   readonly prodAccountId: string;
   readonly gitHubOwner: string;
   readonly gitHubRepo: string;
-  readonly gitHubBranch: string;
 }
 
-export class PipelineStack extends Stack {
+export class GitFlowBasedPipelineStack extends Stack {
   constructor(app: App, id: string, props: PipelineStackProps) {
     super(app, id, props);
 
@@ -50,16 +49,15 @@ export class PipelineStack extends Stack {
 
     const sourceOutput = new Artifact();
 
-    const sourceAction = new GitHubSourceAction({
+    //dev
+    const devSourceAction = new GitHubSourceAction({
       actionName: "GitHub_Source",
       owner: props.gitHubOwner,
       repo: props.gitHubRepo,
-      branch: props.gitHubBranch,
+      branch: "develop",
       oauthToken: gitHubSecret.secretValue,
       output: sourceOutput,
     });
-
-    //dev
     const devDeploymentRole = Role.fromRoleArn(
       this,
       "DevDeploymentRole",
@@ -96,6 +94,16 @@ export class PipelineStack extends Stack {
     );
 
     //prod
+
+    const prodSourceAction = new GitHubSourceAction({
+      actionName: "GitHub_Source",
+      owner: props.gitHubOwner,
+      repo: props.gitHubRepo,
+      branch: "main",
+      oauthToken: gitHubSecret.secretValue,
+      output: sourceOutput,
+    });
+
     const prodDeploymentRole = Role.fromRoleArn(
       this,
       "ProdDeploymentRole",
@@ -214,13 +222,14 @@ export class PipelineStack extends Stack {
     const cdkBuildOutput = new Artifact("CdkBuildOutput");
     const lambdaBuildOutput = new Artifact("LambdaBuildOutput");
 
-    const pipeline = new Pipeline(this, "Pipeline", {
+    // Develop/Staging Branch Pipeline
+    const developPipeline = new Pipeline(this, "DevPipeline", {
       pipelineName: "CrossAccountPipeline",
       artifactBucket: artifactBucket,
       stages: [
         {
           stageName: "Source",
-          actions: [sourceAction],
+          actions: [devSourceAction],
         },
         {
           stageName: "Build",
@@ -297,11 +306,53 @@ export class PipelineStack extends Stack {
             }),
           ],
         },
+      ],
+    });
+
+    developPipeline.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["pricing:*"],
+        resources: ["*"],
+      })
+    );
+
+    developPipeline.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        resources: [`arn:aws:iam::${props.devAccountId}:role/*`],
+      })
+    );
+
+    developPipeline.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        resources: [`arn:aws:iam::${props.stageAccountId}:role/*`],
+      })
+    );
+
+    // Prod Branch Pipeline
+    const prodPipeline = new Pipeline(this, "ProdPipeline", {
+      pipelineName: "CrossAccountPipeline",
+      artifactBucket: artifactBucket,
+      stages: [
         {
-          stageName: "prod-manual-approval",
+          stageName: "Source",
+          actions: [prodSourceAction],
+        },
+        {
+          stageName: "Build",
           actions: [
-            new ManualApprovalAction({
-              actionName: "manual-approval-prod",
+            new CodeBuildAction({
+              actionName: "Application_Build",
+              project: lambdaBuild,
+              input: sourceOutput,
+              outputs: [lambdaBuildOutput],
+            }),
+            new CodeBuildAction({
+              actionName: "CDK_Synth",
+              project: cdkBuild,
+              input: sourceOutput,
+              outputs: [cdkBuildOutput],
             }),
           ],
         },
@@ -333,38 +384,17 @@ export class PipelineStack extends Stack {
       ],
     });
 
-    pipeline.addToRolePolicy(
-      new PolicyStatement({
-        actions: ["sts:AssumeRole"],
-        resources: [`arn:aws:iam::${props.devAccountId}:role/*`],
-      })
-    );
-
-    pipeline.addToRolePolicy(
-      new PolicyStatement({
-        actions: ["pricing:*"],
-        resources: ["*"],
-      })
-    );
-
-    pipeline.addToRolePolicy(
-      new PolicyStatement({
-        actions: ["sts:AssumeRole"],
-        resources: [`arn:aws:iam::${props.devAccountId}:role/*`],
-      })
-    );
-
-    pipeline.addToRolePolicy(
-      new PolicyStatement({
-        actions: ["sts:AssumeRole"],
-        resources: [`arn:aws:iam::${props.stageAccountId}:role/*`],
-      })
-    );
-
-    pipeline.addToRolePolicy(
+    prodPipeline.addToRolePolicy(
       new PolicyStatement({
         actions: ["sts:AssumeRole"],
         resources: [`arn:aws:iam::${props.prodAccountId}:role/*`],
+      })
+    );
+
+    prodPipeline.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["pricing:*"],
+        resources: ["*"],
       })
     );
 
