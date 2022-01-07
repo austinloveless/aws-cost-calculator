@@ -229,7 +229,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
 
     // Develop Branch Pipeline
     const devPipeline = new Pipeline(this, "DevPipeline", {
-      pipelineName: "DevCrossAccountPipeline",
+      pipelineName: "EnvBasedCrossAccountPipeline-dev",
       artifactBucket: artifactBucket,
       stages: [
         {
@@ -363,7 +363,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
 
     // Prod Branch Pipeline
     const prodPipeline = new Pipeline(this, "ProdPipeline", {
-      pipelineName: "ProdCrossAccountPipeline",
+      pipelineName: "EnvBasedCrossAccountPipeline-prod",
       artifactBucket: artifactBucket,
       stages: [
         {

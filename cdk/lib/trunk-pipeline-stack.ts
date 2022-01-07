@@ -214,7 +214,7 @@ export class TrunkPipelineStack extends Stack {
     const lambdaBuildOutput = new Artifact("LambdaBuildOutput");
 
     const pipeline = new Pipeline(this, "Pipeline", {
-      pipelineName: "CrossAccountPipeline",
+      pipelineName: "TrunkCrossAccountPipeline",
       artifactBucket: artifactBucket,
       stages: [
         {
