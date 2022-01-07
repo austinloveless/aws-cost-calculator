@@ -141,7 +141,7 @@ export class TrunkPipelineStack extends Stack {
     key.grantDecrypt(prodCrossAccountRole);
 
     const artifactBucket = new Bucket(this, "TrunkArtifactBucket", {
-      bucketName: `artifact-bucket-${this.account}`,
+      bucketName: `trunk-artifact-bucket-${this.account}`,
       removalPolicy: RemovalPolicy.DESTROY,
       encryption: BucketEncryption.KMS,
       encryptionKey: key,

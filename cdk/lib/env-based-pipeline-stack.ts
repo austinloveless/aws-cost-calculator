@@ -154,8 +154,8 @@ export class EnvironmentBasedPipelineStack extends Stack {
     key.grantDecrypt(prodAccountRootPrincipal);
     key.grantDecrypt(prodCrossAccountRole);
 
-    const artifactBucket = new Bucket(this, "EnvBasedArtifactBucket", {
-      bucketName: `artifact-bucket-${this.account}`,
+    const artifactBucket = new Bucket(this, "ArtifactBucket", {
+      bucketName: `env-based-artifact-bucket-${this.account}`,
       removalPolicy: RemovalPolicy.DESTROY,
       encryption: BucketEncryption.KMS,
       encryptionKey: key,
@@ -229,7 +229,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
 
     // Develop Branch Pipeline
     const devPipeline = new Pipeline(this, "DevPipeline", {
-      pipelineName: "CrossAccountPipeline",
+      pipelineName: "DevCrossAccountPipeline",
       artifactBucket: artifactBucket,
       stages: [
         {
@@ -296,7 +296,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
 
     // Stage Branch Pipeline
     const stagePipeline = new Pipeline(this, "StagePipeline", {
-      pipelineName: "CrossAccountPipeline",
+      pipelineName: "StageCrossAccountPipeline",
       artifactBucket: artifactBucket,
       stages: [
         {
@@ -363,7 +363,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
 
     // Prod Branch Pipeline
     const prodPipeline = new Pipeline(this, "ProdPipeline", {
-      pipelineName: "CrossAccountPipeline",
+      pipelineName: "ProdCrossAccountPipeline",
       artifactBucket: artifactBucket,
       stages: [
         {
