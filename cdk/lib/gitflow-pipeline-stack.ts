@@ -134,7 +134,7 @@ export class GitFlowBasedPipelineStack extends Stack {
     const prodAccountRootPrincipal = new AccountPrincipal(props.prodAccountId);
 
     const key = new Key(this, "ArtifactKey", {
-      alias: "key/artifact-key",
+      alias: "key/artifact-key-gitflow",
     });
 
     //dev
@@ -224,7 +224,7 @@ export class GitFlowBasedPipelineStack extends Stack {
 
     // Develop/Staging Branch Pipeline
     const developPipeline = new Pipeline(this, "DevPipeline", {
-      pipelineName: "CrossAccountPipeline",
+      pipelineName: "GitFlowCrossAccountPipeline-dev",
       artifactBucket: artifactBucket,
       stages: [
         {
@@ -332,7 +332,7 @@ export class GitFlowBasedPipelineStack extends Stack {
 
     // Prod Branch Pipeline
     const prodPipeline = new Pipeline(this, "ProdPipeline", {
-      pipelineName: "CrossAccountPipeline",
+      pipelineName: "GitFlowCrossAccountPipeline-prod",
       artifactBucket: artifactBucket,
       stages: [
         {
@@ -400,7 +400,7 @@ export class GitFlowBasedPipelineStack extends Stack {
 
     new CfnOutput(this, "ArtifactBucketEncryptionKeyArn", {
       value: key.keyArn,
-      exportName: "ArtifactBucketEncryptionKey",
+      exportName: "GitFlowArtifactBucketEncryptionKey",
     });
   }
 }

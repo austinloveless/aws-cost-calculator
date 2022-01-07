@@ -139,7 +139,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
     const prodAccountRootPrincipal = new AccountPrincipal(props.prodAccountId);
 
     const key = new Key(this, "ArtifactKey", {
-      alias: "key/artifact-key",
+      alias: "key/artifact-key-envbased",
     });
 
     //dev
@@ -430,7 +430,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
 
     new CfnOutput(this, "ArtifactBucketEncryptionKeyArn", {
       value: key.keyArn,
-      exportName: "ArtifactBucketEncryptionKey",
+      exportName: "EnvBasedArtifactBucketEncryptionKey",
     });
   }
 }
