@@ -60,7 +60,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
     const devDeploymentRole = Role.fromRoleArn(
       this,
       "DevDeploymentRole",
-      `arn:aws:iam::${props.devAccountId}:role/CloudFormationDeploymentRole`,
+      `arn:aws:iam::${props.devAccountId}:role/EnvBasedCloudFormationDeploymentRole`,
       {
         mutable: false,
       }
@@ -68,7 +68,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
     const devCrossAccountRole = Role.fromRoleArn(
       this,
       "DevCrossAccountRole",
-      `arn:aws:iam::${props.devAccountId}:role/CodePipelineCrossAccountRole`,
+      `arn:aws:iam::${props.devAccountId}:role/EnvBasedCodePipelineAccountAccessRole`,
       {
         mutable: false,
       }
@@ -86,7 +86,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
     const stageDeploymentRole = Role.fromRoleArn(
       this,
       "StageDeploymentRole",
-      `arn:aws:iam::${props.stageAccountId}:role/CloudFormationDeploymentRole`,
+      `arn:aws:iam::${props.stageAccountId}:role/EnvBasedCloudFormationDeploymentRole`,
       {
         mutable: false,
       }
@@ -94,7 +94,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
     const stageCrossAccountRole = Role.fromRoleArn(
       this,
       "StageCrossAccountRole",
-      `arn:aws:iam::${props.stageAccountId}:role/CodePipelineCrossAccountRole`,
+      `arn:aws:iam::${props.stageAccountId}:role/EnvBasedCodePipelineAccountAccessRole`,
       {
         mutable: false,
       }
@@ -112,7 +112,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
     const prodDeploymentRole = Role.fromRoleArn(
       this,
       "ProdDeploymentRole",
-      `arn:aws:iam::${props.prodAccountId}:role/CloudFormationDeploymentRole`,
+      `arn:aws:iam::${props.prodAccountId}:role/EnvBasedCloudFormationDeploymentRole`,
       {
         mutable: false,
       }
@@ -121,7 +121,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
     const prodCrossAccountRole = Role.fromRoleArn(
       this,
       "ProdCrossAccountRole",
-      `arn:aws:iam::${props.prodAccountId}:role/CodePipelineCrossAccountRole`,
+      `arn:aws:iam::${props.prodAccountId}:role/EnvBasedCodePipelineAccountAccessRole`,
       {
         mutable: false,
       }
@@ -261,12 +261,13 @@ export class EnvironmentBasedPipelineStack extends Stack {
               templatePath: cdkBuildOutput.atPath(
                 "DevApplicationStack.template.json"
               ),
-              stackName: "DevApplicationDeploymentStack",
+              stackName: "EnvBasedApplicationDeploymentStack-dev",
               adminPermissions: true,
               parameterOverrides: {
                 ...props.devApplicationStack.lambdaCode.assign(
                   lambdaBuildOutput.s3Location
                 ),
+                env: "envbased",
               },
               deploymentRole: devDeploymentRole,
               cfnCapabilities: [
@@ -328,12 +329,13 @@ export class EnvironmentBasedPipelineStack extends Stack {
               templatePath: cdkBuildOutput.atPath(
                 "StageApplicationStack.template.json"
               ),
-              stackName: "StageApplicationDeploymentStack",
+              stackName: "EnvBasedApplicationDeploymentStack-stage",
               adminPermissions: true,
               parameterOverrides: {
                 ...props.stageApplicationStack.lambdaCode.assign(
                   lambdaBuildOutput.s3Location
                 ),
+                env: "envbased",
               },
               deploymentRole: stageDeploymentRole,
               cfnCapabilities: [
@@ -395,12 +397,13 @@ export class EnvironmentBasedPipelineStack extends Stack {
               templatePath: cdkBuildOutput.atPath(
                 "ProdApplicationStack.template.json"
               ),
-              stackName: "ProdApplicationDeploymentStack",
+              stackName: "EnvBasedApplicationDeploymentStack-prod",
               adminPermissions: true,
               parameterOverrides: {
                 ...props.prodApplicationStack.lambdaCode.assign(
                   lambdaBuildOutput.s3Location
                 ),
+                env: "envbased",
               },
               deploymentRole: prodDeploymentRole,
               cfnCapabilities: [

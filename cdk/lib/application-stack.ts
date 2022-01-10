@@ -4,7 +4,7 @@ import {
   CfnOutput,
   StackProps,
   RemovalPolicy,
-  Duration,
+  CfnParameter,
 } from "@aws-cdk/core";
 import { LambdaRestApi } from "@aws-cdk/aws-apigateway";
 import {
@@ -49,6 +49,11 @@ export class ApplicationStack extends Stack {
 
     this.lambdaCode = Code.fromCfnParameters();
 
+    const env = new CfnParameter(this, "env", {
+      type: "String",
+      description: "Env",
+    });
+
     const dynamoDBFullAccess = new PolicyDocument({
       statements: [
         new PolicyStatement({
@@ -63,7 +68,7 @@ export class ApplicationStack extends Stack {
       "resetNumberOfRequests-role",
       {
         assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-        roleName: "ResetNumberOfRequestsRole",
+        roleName: `ResetNumberOfRequestsRole-${env.valueAsString}`,
         inlinePolicies: {
           DynamoDBFullAccess: dynamoDBFullAccess,
         },
@@ -93,7 +98,7 @@ export class ApplicationStack extends Stack {
 
     const lambdaRole = new Role(this, "lambda-role", {
       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-      roleName: "ApplicationStackLambdaRole",
+      roleName: `ApplicationStackLambdaRole-${env.valueAsString}`,
       inlinePolicies: {
         DynamoDBFullAccess: dynamoDBFullAccess,
       },
@@ -109,7 +114,7 @@ export class ApplicationStack extends Stack {
         runtime: Runtime.NODEJS_14_X,
         code: this.lambdaCode,
         handler: "dist/lambda.handler",
-        functionName: `${props.applicationName}-${props.stage}`,
+        functionName: `${props.applicationName}-${props.stage}-${env.valueAsString}`,
         role: lambdaRole,
         environment: {
           PRODUCT_ID: process.env.PRODUCT_ID ?? "",
@@ -126,7 +131,7 @@ export class ApplicationStack extends Stack {
       {
         handler,
         proxy: false,
-        restApiName: `${props.applicationName}-api-${props.stage}`,
+        restApiName: `${props.applicationName}-api-${props.stage}-${env.valueAsString}`,
       }
     );
 
@@ -159,7 +164,9 @@ export class ApplicationStack extends Stack {
     const dashboard = new Dashboard(
       this,
       `${props.applicationName}-dashboard`,
-      { dashboardName: `${props.applicationName}-dashboard` }
+      {
+        dashboardName: `${props.applicationName}-dashboard-${env.valueAsString}`,
+      }
     );
     dashboard.addWidgets(
       // Lambda

@@ -12,17 +12,7 @@
       "Effect": "Allow"
     },
     {
-      "Action": "lambda:*",
-      "Resource": "*",
-      "Effect": "Allow"
-    },
-    {
-      "Action": "apigateway:*",
-      "Resource": "*",
-      "Effect": "Allow"
-    },
-    {
-      "Action": "codedeploy:*",
+      "Action": "*",
       "Resource": "*",
       "Effect": "Allow"
     },

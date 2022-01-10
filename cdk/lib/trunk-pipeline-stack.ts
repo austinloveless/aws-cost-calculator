@@ -246,12 +246,13 @@ export class TrunkPipelineStack extends Stack {
               templatePath: cdkBuildOutput.atPath(
                 "DevApplicationStack.template.json"
               ),
-              stackName: "DevApplicationDeploymentStack",
+              stackName: "TrunkApplicationDeploymentStack-dev",
               adminPermissions: true,
               parameterOverrides: {
                 ...props.devApplicationStack.lambdaCode.assign(
                   lambdaBuildOutput.s3Location
                 ),
+                env: "trunk",
               },
               deploymentRole: devDeploymentRole,
               cfnCapabilities: [
@@ -279,12 +280,13 @@ export class TrunkPipelineStack extends Stack {
               templatePath: cdkBuildOutput.atPath(
                 "StageApplicationStack.template.json"
               ),
-              stackName: "StageApplicationDeploymentStack",
+              stackName: "TrunkApplicationDeploymentStack-stage",
               adminPermissions: true,
               parameterOverrides: {
                 ...props.stageApplicationStack.lambdaCode.assign(
                   lambdaBuildOutput.s3Location
                 ),
+                env: "trunk",
               },
               deploymentRole: stageDeploymentRole,
               cfnCapabilities: [
@@ -312,12 +314,13 @@ export class TrunkPipelineStack extends Stack {
               templatePath: cdkBuildOutput.atPath(
                 "ProdApplicationStack.template.json"
               ),
-              stackName: "ProdApplicationDeploymentStack",
+              stackName: "TrunkApplicationDeploymentStack-prod",
               adminPermissions: true,
               parameterOverrides: {
                 ...props.prodApplicationStack.lambdaCode.assign(
                   lambdaBuildOutput.s3Location
                 ),
+                env: "trunk",
               },
               deploymentRole: prodDeploymentRole,
               cfnCapabilities: [
