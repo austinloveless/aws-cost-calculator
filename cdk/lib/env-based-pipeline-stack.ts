@@ -297,7 +297,7 @@ export class EnvironmentBasedPipelineStack extends Stack {
 
     // Stage Branch Pipeline
     const stagePipeline = new Pipeline(this, "StagePipeline", {
-      pipelineName: "StageCrossAccountPipeline",
+      pipelineName: "EnvBasedCrossAccountPipeline-stage",
       artifactBucket: artifactBucket,
       stages: [
         {
