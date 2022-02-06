@@ -14,7 +14,7 @@ export const putItem = async (
   email?: string,
   customerId?: string,
   subscriptionId?: string
-) => {
+): Promise<any> => {
   try {
     await dynamoDB
       .put({
@@ -36,7 +36,7 @@ export const putItem = async (
   }
 };
 
-export const getItemByIpAddress = async (ipAddress: string) => {
+export const getItemByIpAddress = async (ipAddress: string): Promise<any> => {
   try {
     const getItem = await dynamoDB
       .get({
@@ -54,7 +54,9 @@ export const getItemByIpAddress = async (ipAddress: string) => {
   }
 };
 
-export const updateNumberOfRequestsCount = async (ipAddress: string) => {
+export const updateNumberOfRequestsCount = async (
+  ipAddress: string
+): Promise<any> => {
   try {
     await dynamoDB
       .update({

@@ -7,7 +7,7 @@ export const authorizeIpAddressByUsage = async (
 ) => {
   const ipAddress = req.socket.remoteAddress;
 
-  const customerRecord = await getItemByIpAddress(ipAddress);
+  const customerRecord: any = await getItemByIpAddress(ipAddress);
 
   if (customerRecord.numberOfRequests > 50 && !customerRecord.email) {
     return res.status(401).json({
