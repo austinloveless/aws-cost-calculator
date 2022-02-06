@@ -16,7 +16,8 @@
     "cdk:deploy": "npm run cdk deploy",
     "cdk:diff": "npm run cdk diff",
     "cdk:synth": "npm run cdk synth",
-    "lint": "eslint --ignore-path .gitignore . --fix"
+    "lint": "eslint --ignore-path .gitignore . --fix",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@aws-cdk/assert": "^1.130.0",
@@ -31,7 +32,8 @@
     "jest": "^27.3.1",
     "ts-jest": "^27.0.7",
     "ts-node": "^9.0.0",
-    "typescript": "~3.9.7"
+    "typescript": "~3.9.7",
+    "husky": "^7.0.0"
   },
   "dependencies": {
     "@aws-cdk/aws-apigateway": "^1.131.0",
