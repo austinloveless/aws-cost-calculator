@@ -13,14 +13,14 @@ const app = new App();
 const applicationName = "aws-cost-calculator";
 
 // GitHub Config
-const gitHubOwner = envVar.get("GITHUB_OWNER").required().asString();
-const gitHubRepo = envVar.get("GITHUB_REPO").required().asString();
+const gitHubOwner = envVar.get("GITHUB_OWNER").asString() ?? "";
+const gitHubRepo = envVar.get("GITHUB_REPO").asString() ?? "";
 
 // Account IDs
-const rootAccountId = envVar.get("ROOT_ACCOUNT").required().asString();
-const devAccountId = envVar.get("DEV_ACCOUNT").required().asString();
-const stageAccountId = envVar.get("STAGE_ACCOUNT").required().asString();
-const prodAccountId = envVar.get("PROD_ACCOUNT").required().asString();
+const rootAccountId = envVar.get("ROOT_ACCOUNT").asString() ?? "";
+const devAccountId = envVar.get("DEV_ACCOUNT").asString() ?? "";
+const stageAccountId = envVar.get("STAGE_ACCOUNT").asString() ?? "";
+const prodAccountId = envVar.get("PROD_ACCOUNT").asString() ?? "";
 
 // Application Stacks
 const devApplicationStack = new ApplicationStack(app, "DevApplicationStack", {
