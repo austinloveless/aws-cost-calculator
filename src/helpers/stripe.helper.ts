@@ -1,8 +1,11 @@
 import Stripe from "stripe";
 import { logger } from "../logger/logger";
 import { getItemByIpAddress, putItem } from "./dynamodb.helper";
+import * as envVar from "env-var";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
+const STRIPE_SECRET_KEY = envVar.get("STRIPE_SECRET_KEY").required().asString();
+
+const stripe = new Stripe(STRIPE_SECRET_KEY, {
   apiVersion: "2020-08-27",
 });
 
@@ -41,7 +44,7 @@ export const createCustomerSubscription = async (
 export const cancelCustomerSubscription = async (
   ipAddress: string
 ): Promise<boolean | unknown> => {
-  const customer = await getItemByIpAddress(ipAddress);
+  const customer: any = await getItemByIpAddress(ipAddress);
   try {
     await stripe.subscriptions.del(customer.subscriptionId);
     logger.info(`Successfully canceled Customer subscription ${ipAddress}`);
@@ -55,7 +58,7 @@ export const cancelCustomerSubscription = async (
 export const getCustomerSubscription = async (
   ipAddress: string
 ): Promise<Record<any, any> | unknown> => {
-  const customer = await getItemByIpAddress(ipAddress);
+  const customer: any = await getItemByIpAddress(ipAddress);
   try {
     const subscription = await stripe.subscriptions.list({
       customer: customer.id,
@@ -76,7 +79,7 @@ const createPriceId = async (): Promise<string> => {
       unit_amount: 500,
       currency: "usd",
       recurring: { interval: "month" },
-      product: process.env.PRODUCT_ID,
+      product: envVar.get("PRODUCT_ID").required().asString(),
     });
     return price.id;
   } catch (error) {

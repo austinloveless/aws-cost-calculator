@@ -2,7 +2,7 @@ import { Joi } from "express-validation";
 import { regions } from "./types/regions.type";
 import { instanceTypes } from "./types/ec2/instance-type.type";
 
-export const ec2Validations: any = {
+export const ec2Validations: unknown = {
   // GET /api/ec2/:instanceType/:region
   getEc2InstanceCost: {
     params: Joi.object({

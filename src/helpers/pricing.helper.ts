@@ -6,6 +6,7 @@ import { ServiceCodes } from "../types/enums/serviceCodes.enum";
 import { locationToRegion } from "./location-to-region.helper";
 import { LambdaUsageTypes } from "../types/enums/lambda.enum";
 import { logger } from "../logger/logger";
+import * as envVar from "env-var";
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ export const pricingGetProducts = async (
 ): Promise<AWS.Pricing.GetProductsResponse | AWS.AWSError | unknown> => {
   const pricing = new AWS.Pricing({
     apiVersion: "2017-10-15",
-    region: process.env.AWS_REGION,
+    region: envVar.get("AWS_REGION").required().asString(),
   });
 
   const params = {

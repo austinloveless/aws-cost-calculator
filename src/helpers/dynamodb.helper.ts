@@ -1,8 +1,12 @@
 import { logger } from "../logger/logger";
+import * as envVar from "env-var";
+import AWS from "aws-sdk";
 
-const AWS = require("aws-sdk");
+const region = envVar.get("AWS_REGION").required().asString();
+const tableName = envVar.get("TABLE_NAME").required().asString();
+
 const dynamoDB = new AWS.DynamoDB.DocumentClient({
-  region: process.env.AWS_REGION,
+  region,
 });
 
 export const putItem = async (
@@ -21,7 +25,7 @@ export const putItem = async (
           customerId,
           subscriptionId,
         },
-        TableName: process.env.TABLE_NAME,
+        TableName: tableName,
       })
       .promise();
     logger.info(`Successfully put Item: ${ipAddress}`);
@@ -36,7 +40,7 @@ export const getItemByIpAddress = async (ipAddress: string) => {
   try {
     const getItem = await dynamoDB
       .get({
-        TableName: process.env.TABLE_NAME,
+        TableName: tableName,
         Key: {
           ipAddress: ipAddress,
         },
@@ -54,7 +58,7 @@ export const updateNumberOfRequestsCount = async (ipAddress: string) => {
   try {
     await dynamoDB
       .update({
-        TableName: process.env.TABLE_NAME,
+        TableName: tableName,
         Key: { ipAddress },
         UpdateExpression: "ADD numberOfRequests :val",
         ExpressionAttributeValues: {

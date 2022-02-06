@@ -1,9 +1,9 @@
-const AWS = require("aws-sdk");
+import AWS from "aws-sdk";
 const dynamoDB = new AWS.DynamoDB.DocumentClient({
   region: process.env.AWS_REGION,
 });
 
-exports.handler = async function (event, context) {
+exports.handler = async function () {
   const params = {
     TableName: process.env.TABLE_NAME,
   };
@@ -25,6 +25,7 @@ const resetNumberOfRequests = async (items) => {
         .update({
           TableName: process.env.TABLE_NAME,
           Key: { ipAddress: item.ipAddress },
+          // eslint-disable-next-line quotes
           UpdateExpression: `set numberOfRequests = :numberOfRequests`,
           ExpressionAttributeValues: {
             ":numberOfRequests": 0,

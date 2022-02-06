@@ -15,13 +15,11 @@ import {
   stripeResolver,
 } from "./graphql/resolvers";
 import routes from "./rest/routes/index";
-import { checkEnvVars } from "./helpers/check-env-variables.helper";
 import { authorizeIpAddressByUsage } from "./middleware/authorization";
 
 dotenv.config();
 const app = express();
 const jsonParser = bodyParser.json();
-checkEnvVars();
 
 const schema = makeExecutableSchema({
   typeDefs: [ec2TypeDefs, lambdaTypeDefs, stripeTypeDefs],
@@ -34,7 +32,7 @@ app.use("/api", jsonParser, routes);
 
 app.use("/graphql", graphqlHTTP({ schema: schema, graphiql: true }));
 
-app.use((err: any, req: any, res: any, next: any) => {
+app.use((err: any, req: any, res: any) => {
   if (err instanceof ValidationError) {
     res.status(err.statusCode).json(err);
   } else {
@@ -45,7 +43,7 @@ app.use((err: any, req: any, res: any, next: any) => {
   }
 });
 
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).json({
     message:
       "Ohh you are lost, read the API documentation to find your way back home",
