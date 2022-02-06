@@ -44,7 +44,7 @@ export const createCustomerSubscription = async (
 
 export const cancelCustomerSubscription = async (
   ipAddress: string
-): Promise<boolean | unknown> => {
+): Promise<boolean | any> => {
   const customer: any = await getItemByIpAddress(ipAddress);
   try {
     await stripe.subscriptions.del(customer.subscriptionId);
@@ -58,7 +58,7 @@ export const cancelCustomerSubscription = async (
 
 export const getCustomerSubscription = async (
   ipAddress: string
-): Promise<Record<any, any> | unknown> => {
+): Promise<Record<any, any> | any> => {
   const customer: any = await getItemByIpAddress(ipAddress);
   try {
     const subscription = await stripe.subscriptions.list({

@@ -15,7 +15,7 @@ export const pricingGetProducts = async (
   termType: TermTypes,
   metric: InstanceTypes | LambdaUsageTypes,
   region?: Regions
-): Promise<AWS.Pricing.GetProductsResponse | AWS.AWSError | unknown> => {
+): Promise<AWS.Pricing.GetProductsResponse | AWS.AWSError | any> => {
   const pricing = new AWS.Pricing({
     apiVersion: "2017-10-15",
     region: envVar.get("AWS_REGION").required().asString(),
