@@ -193,10 +193,10 @@ export class TrunkPipelineStack extends Stack {
             ],
           },
           pre_build: {
-            commands: ["cd ../", "npm run test", "cd src"],
+            commands: ["cd ../", "npm run test"],
           },
           build: {
-            commands: ["npm run build"],
+            commands: ["cd src", "npm run build"],
           },
         },
         artifacts: {

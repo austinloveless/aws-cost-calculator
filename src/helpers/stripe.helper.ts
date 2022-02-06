@@ -14,7 +14,7 @@ export const createCustomerSubscription = async (
   email: string,
   cardInformation: Record<any, any>,
   ipAddress: string
-): Promise<string | unknown> => {
+): Promise<string | any> => {
   const priceId = await createPriceId();
   const paymentMethodId = await createPaymentMethod(cardInformation);
   const customerId = await createCustomer(email, paymentMethodId);
