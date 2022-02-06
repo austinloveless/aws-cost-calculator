@@ -30,8 +30,8 @@ import { Table, BillingMode, AttributeType } from "@aws-cdk/aws-dynamodb";
 import fs from "fs";
 import * as envVar from "env-var";
 
-const PRODUCT_ID = envVar.get("PRODUCT_ID").required().asString();
-const STRIPE_SECRET_KEY = envVar.get("STRIPE_SECRET_KEY").required().asString();
+const PRODUCT_ID = envVar.get("PRODUCT_ID").asString();
+const STRIPE_SECRET_KEY = envVar.get("STRIPE_SECRET_KEY").asString();
 
 interface ApplicationStackProps extends StackProps {
   applicationName: string;
@@ -121,8 +121,8 @@ export class ApplicationStack extends Stack {
         functionName: `${props.applicationName}-${props.stage}-${env.valueAsString}`,
         role: lambdaRole,
         environment: {
-          PRODUCT_ID,
-          STRIPE_SECRET_KEY,
+          PRODUCT_ID: PRODUCT_ID ?? "",
+          STRIPE_SECRET_KEY: STRIPE_SECRET_KEY ?? "",
           NODE_ENV: "production",
           TABLE_NAME: table.tableName,
         },

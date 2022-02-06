@@ -274,11 +274,46 @@ export class GitFlowBasedPipelineStack extends Stack {
             }),
           ],
         },
+      ],
+    });
+
+    developPipeline.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["pricing:*"],
+        resources: ["*"],
+      })
+    );
+
+    developPipeline.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        resources: [`arn:aws:iam::${props.devAccountId}:role/*`],
+      })
+    );
+
+    // Prod Branch Pipeline
+    const prodPipeline = new Pipeline(this, "ProdPipeline", {
+      pipelineName: "GitFlowCrossAccountPipeline-prod",
+      artifactBucket: artifactBucket,
+      stages: [
         {
-          stageName: "stage-manual-approval",
+          stageName: "Source",
+          actions: [prodSourceAction],
+        },
+        {
+          stageName: "Build",
           actions: [
-            new ManualApprovalAction({
-              actionName: "manual-approval-stage",
+            new CodeBuildAction({
+              actionName: "Application_Build",
+              project: lambdaBuild,
+              input: sourceOutput,
+              outputs: [lambdaBuildOutput],
+            }),
+            new CodeBuildAction({
+              actionName: "CDK_Synth",
+              project: cdkBuild,
+              input: sourceOutput,
+              outputs: [cdkBuildOutput],
             }),
           ],
         },
@@ -308,53 +343,11 @@ export class GitFlowBasedPipelineStack extends Stack {
             }),
           ],
         },
-      ],
-    });
-
-    developPipeline.addToRolePolicy(
-      new PolicyStatement({
-        actions: ["pricing:*"],
-        resources: ["*"],
-      })
-    );
-
-    developPipeline.addToRolePolicy(
-      new PolicyStatement({
-        actions: ["sts:AssumeRole"],
-        resources: [`arn:aws:iam::${props.devAccountId}:role/*`],
-      })
-    );
-
-    developPipeline.addToRolePolicy(
-      new PolicyStatement({
-        actions: ["sts:AssumeRole"],
-        resources: [`arn:aws:iam::${props.stageAccountId}:role/*`],
-      })
-    );
-
-    // Prod Branch Pipeline
-    const prodPipeline = new Pipeline(this, "ProdPipeline", {
-      pipelineName: "GitFlowCrossAccountPipeline-prod",
-      artifactBucket: artifactBucket,
-      stages: [
         {
-          stageName: "Source",
-          actions: [prodSourceAction],
-        },
-        {
-          stageName: "Build",
+          stageName: "prod-manual-approval",
           actions: [
-            new CodeBuildAction({
-              actionName: "Application_Build",
-              project: lambdaBuild,
-              input: sourceOutput,
-              outputs: [lambdaBuildOutput],
-            }),
-            new CodeBuildAction({
-              actionName: "CDK_Synth",
-              project: cdkBuild,
-              input: sourceOutput,
-              outputs: [cdkBuildOutput],
+            new ManualApprovalAction({
+              actionName: "manual-approval-prod",
             }),
           ],
         },
@@ -386,6 +379,13 @@ export class GitFlowBasedPipelineStack extends Stack {
         },
       ],
     });
+
+    prodPipeline.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        resources: [`arn:aws:iam::${props.stageAccountId}:role/*`],
+      })
+    );
 
     prodPipeline.addToRolePolicy(
       new PolicyStatement({

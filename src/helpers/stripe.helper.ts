@@ -4,6 +4,7 @@ import { getItemByIpAddress, putItem } from "./dynamodb.helper";
 import * as envVar from "env-var";
 
 const STRIPE_SECRET_KEY = envVar.get("STRIPE_SECRET_KEY").required().asString();
+const PRODUCT_ID = envVar.get("PRODUCT_ID").required().asString();
 
 const stripe = new Stripe(STRIPE_SECRET_KEY, {
   apiVersion: "2020-08-27",
@@ -79,7 +80,7 @@ const createPriceId = async (): Promise<string> => {
       unit_amount: 500,
       currency: "usd",
       recurring: { interval: "month" },
-      product: envVar.get("PRODUCT_ID").required().asString(),
+      product: PRODUCT_ID,
     });
     return price.id;
   } catch (error) {
